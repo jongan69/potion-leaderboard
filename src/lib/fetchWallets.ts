@@ -1,6 +1,7 @@
 export async function fetchWallets() {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
     try {
-        const response = await fetch("http://localhost:3000/api/traders");
+        const response = await fetch(`${baseUrl}/api/traders`);
         const data = await response.json();
         return data.traders;
     } catch (error) {
