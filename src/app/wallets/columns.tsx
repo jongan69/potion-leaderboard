@@ -7,13 +7,13 @@ import { DataTableColumnHeader } from "@/app/wallets/data-table-column-header";
 import { DataTableRowActions } from "@/app/wallets/data-table-row-actions";
 import { Wallet } from "@/lib/types";
 import { usersStatus } from "./definitions";
-
+import Image from "next/image";
 export const columns: ColumnDef<Wallet>[] = [
   {
     accessorKey: "profilePic",
-    header: ({ column }) => <DataTableColumnHeader column={column} title={"Profile Pic"} />,
+    header: ({ column }) => <h1> Profile Pic </h1>,
     cell: ({ row }) => {
-      return <div className="font-medium">{row.getValue("profilePic")}</div>;
+      return <Image src={`https://avatar.iran.liara.run/username?username=${row.getValue("xHandle")}`} alt="Profile Pic" width={32} height={32} />;
     },
   },
   {
@@ -40,7 +40,7 @@ export const columns: ColumnDef<Wallet>[] = [
         return false;
       });
     },
-  },    
+  },
   // {
   //   accessorKey: "rtn",
   //   header: ({ column }) => <DataTableColumnHeader column={column} title={"RTN"} />,

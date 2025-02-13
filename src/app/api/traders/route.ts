@@ -6,7 +6,7 @@ export async function GET() {
             traders: [
                 {
                   id: "9953ed85-31a0-4db9-acc8-e25b76176443",
-                  profilePic: "https://via.placeholder.com/150",
+                  profilePic: "https://avatar.iran.liara.run/public",
                   wallet: "0x1234567890123456789012345678901234567890",
                   xHandle: "@johnmiller",
                   followers: 1000,
@@ -25,7 +25,7 @@ export async function GET() {
                 },
                 {
                   id: "328c2bef-d84b-44a2-b5ae-03bd6550c4c4",
-                  profilePic: "https://via.placeholder.com/150",
+                  profilePic: "https://avatar.iran.liara.run/public",
                   wallet: "0x1234567890123456789012345678901234567890",
                   xHandle: "@elizabetsmith",
                   followers: 1000,
@@ -44,7 +44,7 @@ export async function GET() {
                 },
                 {
                   id: "9543e3a4-99f2-4fcb-ba5d-f2aaebff6716",
-                  profilePic: "https://via.placeholder.com/150",
+                  profilePic: "https://avatar.iran.liara.run/public",
                   wallet: "0x1234567890123456789012345678901234567890",
                   xHandle: "@noahwilson",
                   followers: 1000,
@@ -63,7 +63,7 @@ export async function GET() {
                 },
                 {
                   id: "bdcba306-57fa-4722-82e3-c4933b09e69b",
-                  profilePic: "https://via.placeholder.com/150",
+                  profilePic: "https://avatar.iran.liara.run/public",
                   wallet: "0x1234567890123456789012345678901234567890",
                   xHandle: "@mariedubois",
                   followers: 1000,
@@ -81,7 +81,7 @@ export async function GET() {
                 },
                 {
                   id: "e643dbea-0ab2-4d3d-8bb8-63aedf027a66",
-                  profilePic: "https://via.placeholder.com/150",
+                  profilePic: "https://avatar.iran.liara.run/public",
                   wallet: "0x1234567890123456789012345678901234567890",
                   xHandle: "@wangwei",
                   followers: 1000,
@@ -99,7 +99,7 @@ export async function GET() {
                 },
                 {
                   id: "94093200-c89f-410f-ba96-046f33fabb3e",
-                  profilePic: "https://via.placeholder.com/150",
+                  profilePic: "https://avatar.iran.liara.run/public",
                   wallet: "0x1234567890123456789012345678901234567890",
                   xHandle: "@conormurphy",
                   followers: 1000,
@@ -117,7 +117,7 @@ export async function GET() {
                 },
                 {
                   id: "4174f655-5cb2-4bd9-a785-ce11f16cebb0",
-                  profilePic: "https://via.placeholder.com/150",
+                  profilePic: "https://avatar.iran.liara.run/public",
                   wallet: "0x1234567890123456789012345678901234567890",
                   xHandle: "@emmatremblay",
                   followers: 1000,
@@ -135,7 +135,7 @@ export async function GET() {
                 },
                 {
                   id: "38d5126b-4473-40d2-8142-2e7049c07346",
-                  profilePic: "https://via.placeholder.com/150",
+                  profilePic: "https://avatar.iran.liara.run/public",
                   wallet: "0x1234567890123456789012345678901234567890",
                   xHandle: "@maximilianbauer",
                   followers: 1000,
@@ -153,7 +153,7 @@ export async function GET() {
                 },
                 {
                   id: "cb3ae8be-e376-4d26-9cfc-5884348c22ec",
-                  profilePic: "https://via.placeholder.com/150",
+                  profilePic: "https://avatar.iran.liara.run/public",
                   wallet: "0x1234567890123456789012345678901234567890",
                   xHandle: "@sofiaricci",
                   followers: 1000,
@@ -171,7 +171,7 @@ export async function GET() {
                 },
                 {
                   id: "fa47c0f4-620c-40b3-a16a-b9afa9a88215",
-                  profilePic: "https://via.placeholder.com/150",
+                  profilePic: "https://avatar.iran.liara.run/public",
                   wallet: "0x1234567890123456789012345678901234567890",
                   xHandle: "@arjunpatel",
                   followers: 1000,
@@ -189,7 +189,7 @@ export async function GET() {
                 },
                 {
                   id: "8ce5b4d9-5182-4cbf-9d48-f187b377e931",
-                  profilePic: "https://via.placeholder.com/150",
+                  profilePic: "https://avatar.iran.liara.run/public",
                   wallet: "0x1234567890123456789012345678901234567890",
                   xHandle: "@satoyuki",
                   followers: 1000,
@@ -207,7 +207,7 @@ export async function GET() {
                 },
                 {
                   id: "cb2c15c3-7fc9-4d51-8b7b-3e636ac6195b",
-                  profilePic: "https://via.placeholder.com/150",
+                  profilePic: "https://avatar.iran.liara.run/public",
                   wallet: "0x1234567890123456789012345678901234567890",
                   xHandle: "@lucassilva",
                   followers: 1000,
