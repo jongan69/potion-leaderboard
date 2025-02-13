@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET() {
     try {
         return NextResponse.json({
             traders: [
@@ -225,11 +225,11 @@ export async function GET(req: Request) {
                 },
               ]
         }, { status: 200 });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error fetching PNL:', error);
         return NextResponse.json({
             error: 'Internal server error while fetching PNL',
-            errorMessage: error.message.error
+            errorMessage: (error as Error).message
         }, { status: 500 });
     }
 }

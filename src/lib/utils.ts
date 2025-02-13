@@ -48,33 +48,33 @@ export function cn(...inputs: ClassValue[]) {
 //   return `${year}-${month}-${day}`
 // }
 
-export function CalculateRange(range: string) {
-  const currentDate = new Date()
-  let from
+// export function CalculateRange(range: string) {
+//   const currentDate = new Date()
+//   let from
 
-  switch (range) {
-    case "1d":
-      currentDate.setDate(currentDate.getDate() - 1)
-      break
-    case "1w":
-      currentDate.setDate(currentDate.getDate() - 7)
-      break
-    case "1m":
-      currentDate.setMonth(currentDate.getMonth() - 1)
-      break
-    case "3m":
-      currentDate.setMonth(currentDate.getMonth() - 3)
-      break
-    case "1y":
-      currentDate.setFullYear(currentDate.getFullYear() - 1)
-      break
-    default:
-      throw new Error(`Invalid range: ${range}`)
-  }
+//   switch (range) {
+//     case "1d":
+//       currentDate.setDate(currentDate.getDate() - 1)
+//       break
+//     case "1w":
+//       currentDate.setDate(currentDate.getDate() - 7)
+//       break
+//     case "1m":
+//       currentDate.setMonth(currentDate.getMonth() - 1)
+//       break
+//     case "3m":
+//       currentDate.setMonth(currentDate.getMonth() - 3)
+//       break
+//     case "1y":
+//       currentDate.setFullYear(currentDate.getFullYear() - 1)
+//       break
+//     default:
+//       throw new Error(`Invalid range: ${range}`)
+//   }
 
-  from = currentDate.toISOString().split("T")[0] // format date to 'YYYY-MM-DD'
-  return from
-}
+//   from = currentDate.toISOString().split("T")[0] // format date to 'YYYY-MM-DD'
+//   return from
+// }
 
 export function calculateInterval(range: string) {
   let interval

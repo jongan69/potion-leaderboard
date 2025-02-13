@@ -4,7 +4,11 @@
 import Link from "next/link";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Row } from "@tanstack/react-table";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, 
+  // Pencil, 
+  // Trash2,
+  // ArrowUpRight
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
