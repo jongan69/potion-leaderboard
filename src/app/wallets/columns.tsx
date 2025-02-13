@@ -11,7 +11,7 @@ import Image from "next/image";
 export const columns: ColumnDef<Wallet>[] = [
   {
     accessorKey: "profilePic",
-    header: ({ column }) => <h1> Profile Pic </h1>,
+    header: () => <h1> Profile Pic </h1>,
     cell: ({ row }) => {
       return <Image src={`https://avatar.iran.liara.run/username?username=${row.getValue("xHandle")}`} alt="Profile Pic" width={32} height={32} />;
     },
