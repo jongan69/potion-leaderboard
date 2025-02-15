@@ -1,28 +1,21 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { getTwitterCredentials } from '@/lib/saveTwitterCredentials';
+import { NextResponse } from 'next/server';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function POST(req: Request) {
   try {
-    const { wallet } = req.body;
+    const { wallet } = await req.json();
     if (!wallet) {
-      return res.status(400).json({ error: 'Wallet address is required' });
+      return NextResponse.json({ error: 'Wallet address is required' }, { status: 400 });
     }
 
     const twitterCredentials = await getTwitterCredentials(wallet);
     
-    res.status(200).json({
+    return NextResponse.json({
       isLinked: !!twitterCredentials,
       username: twitterCredentials?.screenName || null
     });
   } catch (error) {
     console.error('Error checking Twitter status:', error);
-    res.status(500).json({ error: 'Failed to check Twitter status' });
+    return NextResponse.json({ error: 'Failed to check Twitter status' }, { status: 500 });
   }
 } 

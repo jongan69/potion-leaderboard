@@ -1,8 +1,7 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import OAuth from 'oauth-1.0a';
 import crypto from 'crypto';
 import { saveTwitterCredentials } from '@/lib/saveTwitterCredentials';
-
+import { NextResponse } from 'next/server';
 const TWITTER_API_KEY = process.env.TWITTER_API_KEY!;
 const TWITTER_API_SECRET = process.env.TWITTER_API_SECRET!;
 
@@ -20,14 +19,11 @@ const oauth = new OAuth({
   },
 });
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { oauth_token, oauth_verifier, wallet, origin } = req.query;
+export async function GET(req: Request) {
+  const { oauth_token, oauth_verifier, wallet, origin } = await req.json();
 
   if (!oauth_token || !oauth_verifier || !wallet) {
-    return res.status(400).json({ error: 'Missing required parameters' });
+    return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
   }
 
   try {
@@ -35,9 +31,9 @@ export default async function handler(
     const requestData = {
       url: 'https://api.twitter.com/oauth/access_token',
       method: 'POST',
-      data: { 
+      data: {
         oauth_token,
-        oauth_verifier 
+        oauth_verifier
       },
     };
 
@@ -51,7 +47,7 @@ export default async function handler(
 
     const data = await response.text();
     const params = new URLSearchParams(data);
-    
+
     const accessToken = params.get('oauth_token');
     const accessTokenSecret = params.get('oauth_token_secret');
     const userId = params.get('user_id');
@@ -71,10 +67,11 @@ export default async function handler(
 
     // console.log('origin', origin);
     // Close the popup and notify the parent window
-    res.setHeader('Content-Type', 'text/html');
-    res.send(`
-      <html>
-        <body>
+    return NextResponse.json({
+      status: 200,
+      body: `
+        <html>
+          <body>
           <script>
             window.opener.postMessage({ 
               type: 'TWITTER_AUTH_SUCCESS', 
@@ -85,9 +82,10 @@ export default async function handler(
           </script>
         </body>
       </html>
-    `);
+    `
+    });
   } catch (error) {
     console.error('Twitter callback error:', error);
-    res.status(500).json({ error: 'Failed to complete Twitter authentication' });
+    return NextResponse.json({ error: 'Failed to complete Twitter authentication' }, { status: 500 });
   }
 } 

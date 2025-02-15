@@ -1,6 +1,6 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import OAuth from 'oauth-1.0a';
 import crypto from 'crypto';
+import { NextResponse } from 'next/server';
 
 const TWITTER_API_KEY = process.env.TWITTER_API_KEY!;
 const TWITTER_API_SECRET = process.env.TWITTER_API_SECRET!;
@@ -20,18 +20,11 @@ const oauth = new OAuth({
   },
 });
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function POST(req: Request) {
   try {
-    const { wallet, origin } = req.body;
+    const { wallet, origin } = await req.json();
     if (!wallet) {
-      return res.status(400).json({ error: 'Wallet address is required' });
+      return NextResponse.json({ error: 'Wallet address is required' });
     }
 
     // Generate OAuth nonce and timestamp
@@ -42,7 +35,7 @@ export default async function handler(
     const requestData = {
       url: 'https://api.twitter.com/oauth/request_token',
       method: 'POST',
-      data: { 
+      data: {
         oauth_callback: `${CALLBACK_URL}?wallet=${wallet}&origin=${origin}`,
         oauth_nonce,
         oauth_timestamp,
@@ -73,10 +66,10 @@ export default async function handler(
     }
 
     const authUrl = `https://api.twitter.com/oauth/authorize?oauth_token=${oauthToken}`;
-    
-    res.status(200).json({ url: authUrl });
+
+    return NextResponse.json({ url: authUrl });
   } catch (error) {
     console.error('Twitter auth error:', error);
-    res.status(500).json({ error: 'Failed to initiate Twitter authentication' });
+    return NextResponse.json({ error: 'Failed to initiate Twitter authentication' }, { status: 500 });
   }
 } 
