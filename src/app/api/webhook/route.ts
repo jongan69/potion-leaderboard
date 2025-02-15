@@ -12,9 +12,9 @@ export async function POST(request: Request) {
   
   // Find matching trader data
   const matchingTrader = tradersData.find(trader => 
-    trader.wallet.toLowerCase() === transaction.feePayer.toLowerCase()
+    trader.wallet === transaction.feePayer
   )
-
+  console.log(matchingTrader)
   // Get amount from nativeTransfers
   const amount = transaction.nativeTransfers[0]?.amount || 0
   
