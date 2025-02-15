@@ -124,21 +124,21 @@ export function LiveTrades() {
               }}
               exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
               transition={{ duration: 0.2 }}
-              className="flex justify-between items-center p-3 bg-card rounded-lg border border-border/50 hover:bg-accent/50 transition-colors"
+              className="flex justify-between items-center p-3 bg-card rounded-lg border border-border/50 hover:bg-accent/50 transition-colors overflow-hidden"
             >
               <Link href={`https://solscan.io/tx/${trade.signature}`} target="_blank" className="w-full">
-                <div className="flex justify-between w-full">
-                  <div className="flex flex-col min-w-0 flex-1 mr-4">
-                    <span className="font-medium text-sm truncate">{trade.label}</span>
+                <div className="flex justify-between w-full gap-4">
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <span className="font-medium text-sm truncate max-w-full">{trade.label}</span>
                     <span className="font-mono text-xs text-muted-foreground">
                       {trade.wallet?.slice(0, 6)}...{trade.wallet?.slice(-4)}
                     </span>
                     {trade.action ? (
-                      <span className="font-mono text-xs text-muted-foreground truncate max-w-[300px]">
+                      <span className="font-mono text-xs text-muted-foreground truncate">
                         {trade.fromAmount} {trade.fromToken || 'SOL'} → {trade.amount} {trade.token}
                       </span>
                     ) : (
-                      <span className="font-mono text-xs text-muted-foreground truncate max-w-[300px]">
+                      <span className="font-mono text-xs text-muted-foreground truncate">
                         {trade.description}
                       </span>
                     )}
