@@ -22,7 +22,7 @@ export async function GET() {
         }
 
         // Function to fetch cielo pnl
-        const getCieloPnl = async (wallet: string) => {
+        const getPnl = async (wallet: string) => {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pnl?walletAddress=${wallet}`)
             const data = await response.json()
@@ -41,7 +41,7 @@ export async function GET() {
                 const username = trader.xHandle.replace('@', '') // Remove @ from handle
                 const [followers, pnl] = await Promise.all([
                     getTwitterFollowers(username),
-                    getCieloPnl(trader.wallet)
+                    getPnl(trader.wallet)
                 ])
                 console.log(username, followers, pnl)
                 return {

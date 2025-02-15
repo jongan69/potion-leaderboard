@@ -5,7 +5,7 @@ const connection = new Connection(`https://mainnet.helius-rpc.com/?api-key=${pro
 const CHUNK_SIZE = 100;
 const INITIAL_BATCH_SIZE = 100; // Reduced from 500
 const MAX_TRANSACTIONS = 1000; // Limit total historical transactions
-const CONCURRENT_REQUESTS = 5; // Number of parallel requests
+const CONCURRENT_REQUESTS = 20; // Number of parallel requests
 
 interface AccountData {
     account: string;
