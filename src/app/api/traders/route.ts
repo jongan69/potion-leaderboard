@@ -24,14 +24,9 @@ export async function GET() {
         // Function to fetch cielo pnl
         const getCieloPnl = async (wallet: string) => {
             try {
-                const response = await fetch(`https://feed-api.cielo.finance/v1/pnl/tokens?wallet=${wallet}`, {
-                    method: 'GET',
-                    headers: {
-                    'Authorization': `Bearer ${process.env.CIELO_BEARER_TOKEN}`,
-                },
-            })
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pnl?walletAddress=${wallet}`)
             const data = await response.json()
-            return Number(data.data.total_pnl_usd.toFixed(2)) || 0 // Add fallback to 0 if no pnl returned
+            return data.usdPnl || 0 // Add fallback to 0 if no pnl returned
             } catch (error) {
                 console.error('Error fetching pnl:', error);
                 return 0;
