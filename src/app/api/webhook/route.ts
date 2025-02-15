@@ -41,8 +41,6 @@ export async function POST(request: Request) {
       }
     }
 
-    console.log('Parsed transfer details:', { amount, senderAddress, receiverAddress })
-
     // Find matching trader data based on either sending or receiving
     const matchingTrader = tradersData.find(trader => {
       const traderWallet = trader.wallet.toLowerCase()
@@ -65,12 +63,22 @@ export async function POST(request: Request) {
     // Process the webhook data
     const trade = {
       wallet: transaction.feePayer,
-      amount: transaction.tokenTransfers ? amount : amount / 1e9, // Only convert to SOL for native transfers
+      amount,
       timestamp: transaction.timestamp * 1000,
       label: matchingTrader?.userName || 'Unknown',
       description: transaction.description,
       token: transaction.tokenTransfers ? transaction.tokenTransfers[0].mint : null,
       signature: transaction.signature,
+    }
+
+    // Add swap parsing logic here
+    const swapRegex = /swapped ([\d.]+) (\w+) for ([\d.]+) (\w+)/
+    const swapMatch = transaction.description.match(swapRegex)
+    
+    if (swapMatch) {
+      const [_, _fromAmount, _fromToken, toAmount, toToken] = swapMatch
+      trade.amount = parseFloat(toAmount)
+      trade.token = toToken.toUpperCase() === 'SOL' ? null : toToken
     }
 
     // Save to Redis and broadcast to clients

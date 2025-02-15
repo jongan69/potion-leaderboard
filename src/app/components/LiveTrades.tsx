@@ -125,9 +125,8 @@ export function LiveTrades() {
                       {trade.description}
                     </span>
                   </div>
-
                   <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                    <span className="font-medium text-sm whitespace-nowrap">{trade.amount} SOL</span>
+                    <span className="font-medium text-sm whitespace-nowrap">{trade.amount} {trade.token}</span>
                     <span className="text-xs text-muted-foreground whitespace-nowrap">
                       {new Date(trade.timestamp || 0).toLocaleTimeString()}
                     </span>
