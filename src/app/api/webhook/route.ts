@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 
 // This would be better stored in a database or message queue in production
-let connectedClients = new Set<WritableStreamDefaultWriter>()
+const connectedClients = new Set<WritableStreamDefaultWriter>()
 
 export async function POST(request: Request) {
   const data = await request.json()
-  
+  console.log(data)
   // Process the webhook data from Helius
   const trade = {
     wallet: data.accountKeys[0], // Adjust based on actual Helius webhook data structure
