@@ -1,12 +1,13 @@
+import { Redis } from '@upstash/redis'
 import { WritableStreamDefaultWriter } from 'stream/web'
-import { MongoClient } from 'mongodb'
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+})
 
 // In-memory store for active connections
 export const connectedClients = new Set<WritableStreamDefaultWriter>()
-
-// MongoDB connection for trade history
-const uri = process.env.MONGODB_URI
-const client = new MongoClient(uri!)
 
 export interface TradeHistory {
   wallet: string
@@ -16,25 +17,13 @@ export interface TradeHistory {
 }
 
 export async function saveTrade(trade: TradeHistory) {
-  try {
-    await client.connect()
-    const db = client.db('potion-leaderboard')
-    await db.collection('trades').insertOne(trade)
-  } finally {
-    await client.close()
-  }
+  const key = `trade:${Date.now()}`
+  await redis.set(key, trade)
+  await redis.zadd('trades_by_time', { score: trade.timestamp, member: key })
 }
 
 export async function getTradeHistory(limit = 100) {
-  try {
-    await client.connect()
-    const db = client.db('potion-leaderboard')
-    return await db.collection('trades')
-      .find()
-      .sort({ timestamp: -1 })
-      .limit(limit)
-      .toArray()
-  } finally {
-    await client.close()
-  }
+  const tradeKeys = await redis.zrange('trades_by_time', 0, limit - 1, { rev: true }) as string[]
+  if (!tradeKeys.length) return []
+  return await redis.mget(...tradeKeys)
 } 
