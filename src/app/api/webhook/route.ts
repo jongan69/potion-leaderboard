@@ -24,6 +24,23 @@ interface Transaction {
   nativeTransfers?: NativeTransfer[]
 }
 
+interface Trade {
+  action: string | null
+  fromAmount: number
+  fromToken: string | null
+  amount: number
+  token: string | null
+  tokenData: {
+    priceUsd: string
+    volume24h: number
+    marketCap: number
+    liquidity: number
+    priceChange24h: number
+    holderCount?: number
+    totalSupply?: string
+  } | null
+}
+
 export async function POST(request: Request) {
   try {
     const webhookData = await request.json()
@@ -107,7 +124,7 @@ function findMatchingTrader(senderAddress?: string, receiverAddress?: string) {
   })
 }
 
-async function enrichTradeWithSwapDetails(trade: any, transaction: Transaction) {
+async function enrichTradeWithSwapDetails(trade: Trade, transaction: Transaction) {
   const swapRegex = /(swapped|transferred) ([\d.]+) (\w+) for ([\d.]+) (\w+)/
   const swapMatch = transaction.description.match(swapRegex)
   
