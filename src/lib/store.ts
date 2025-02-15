@@ -19,6 +19,7 @@ export interface TradeHistory {
 export async function saveTrade(trade: TradeHistory) {
   const key = `trade:${Date.now()}`
   await redis.set(key, trade)
+  await redis.expire(key, 86400) // Expire after 24 hours
   await redis.zadd('trades_by_time', { score: trade.timestamp, member: key })
 }
 

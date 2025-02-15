@@ -15,40 +15,52 @@ export function LiveTrades() {
   const [status, setStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
 
   useEffect(() => {
-    const eventSource = new EventSource('/api/trades/stream')
+    let eventSource: EventSource | null = null
+    let reconnectTimeout: NodeJS.Timeout | null = null
     let reconnectAttempts = 0
     const maxReconnectAttempts = 3
+    const reconnectDelay = 1000 // Start with 1 second
 
-    eventSource.onopen = () => {
-      setStatus('connected')
-      reconnectAttempts = 0 // Reset attempts on successful connection
-    }
+    const connect = () => {
+      eventSource = new EventSource('/api/trades/stream')
+      
+      eventSource.onopen = () => {
+        setStatus('connected')
+        reconnectAttempts = 0
+      }
 
-    eventSource.onmessage = (event) => {
-      try {
-        const trade = JSON.parse(event.data)
-        setTrades((prevTrades) => {
-          // Avoid duplicate connection messages
-          if (trade.message && prevTrades.some(t => t.message)) {
-            return prevTrades
-          }
-          return [trade, ...prevTrades].slice(0, 10)
-        })
-      } catch (error) {
-        console.error('Error parsing trade data:', error)
+      eventSource.onmessage = (event) => {
+        try {
+          const trade = JSON.parse(event.data)
+          setTrades((prevTrades) => {
+            // Avoid duplicate connection messages
+            if (trade.message && prevTrades.some(t => t.message)) {
+              return prevTrades
+            }
+            return [trade, ...prevTrades].slice(0, 10)
+          })
+        } catch (error) {
+          console.error('Error parsing trade data:', error)
+        }
+      }
+
+      eventSource.onerror = () => {
+        setStatus('error')
+        eventSource?.close()
+        
+        if (reconnectAttempts < maxReconnectAttempts) {
+          reconnectAttempts++
+          const delay = Math.min(reconnectDelay * Math.pow(2, reconnectAttempts - 1), 10000)
+          reconnectTimeout = setTimeout(connect, delay)
+        }
       }
     }
 
-    eventSource.onerror = () => {
-      reconnectAttempts++
-      setStatus('error')
-      if (reconnectAttempts >= maxReconnectAttempts) {
-        eventSource.close()
-      }
-    }
+    connect()
 
     return () => {
-      eventSource.close()
+      eventSource?.close()
+      if (reconnectTimeout) clearTimeout(reconnectTimeout)
     }
   }, [])
 
