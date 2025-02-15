@@ -13,11 +13,6 @@ export async function GET() {
   // Send initial message
   writer.write(encoder.encode(`data: ${JSON.stringify({ message: 'Connected to trade stream' })}\n\n`))
 
-  // Clean up when the connection closes
-  stream.readable.pipeTo(new WritableStream()).catch(() => {
-    connectedClients.delete(writer)
-  })
-
   return new Response(stream.readable, {
     headers: {
       'Content-Type': 'text/event-stream',
