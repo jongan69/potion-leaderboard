@@ -32,7 +32,7 @@ export async function GET() {
         'Connection': 'keep-alive',
       },
     })
-  } catch (error) {
+  } catch {
     connectedClients.delete(writer)
     return new Response('Stream error', { status: 500 })
   }
