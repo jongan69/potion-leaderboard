@@ -33,7 +33,7 @@ export function LiveTrades() {
     channel.bind('new-trade', (trade: Trade) => {
       setTrades((prevTrades) => [...prevTrades, trade]
         .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
-        .slice(0, 10)
+        .slice(0, 15)
       )
     })
 
@@ -110,7 +110,7 @@ export function LiveTrades() {
                 opacity: getTradeOpacity(trade.timestamp), 
                 y: 0 
               }}
-              exit={{ opacity: 0, x: -20 }}
+              exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
               transition={{ duration: 0.2 }}
               className="flex justify-between items-center p-3 bg-card rounded-lg border border-border/50 hover:bg-accent/50 transition-colors"
             >
