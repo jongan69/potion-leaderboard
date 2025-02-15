@@ -67,7 +67,11 @@ export async function POST(request: Request) {
       wallet: transaction.feePayer,
       amount: transaction.tokenTransfers ? amount : amount / 1e9, // Only convert to SOL for native transfers
       timestamp: transaction.timestamp * 1000,
-      label: matchingTrader?.userName || 'Unknown'
+      label: matchingTrader?.userName || 'Unknown',
+      description: transaction.description,
+      token: transaction.tokenTransfers ? transaction.tokenTransfers[0].mint : null,
+      signature: transaction.signature,
+      txHash: transaction.transactionHash
     }
 
     // Save to Redis and broadcast to clients
