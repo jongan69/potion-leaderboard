@@ -64,6 +64,9 @@ export async function POST(request: Request) {
     const trade = {
       wallet: transaction.feePayer,
       amount,
+      action: null,
+      fromAmount: 0,
+      fromToken: null,
       timestamp: transaction.timestamp * 1000,
       label: matchingTrader?.userName || 'Unknown',
       description: transaction.description,
@@ -71,12 +74,20 @@ export async function POST(request: Request) {
       signature: transaction.signature,
     }
 
-    // Add swap parsing logic here
-    const swapRegex = /swapped ([\d.]+) (\w+) for ([\d.]+) (\w+)/
+    // Add swap/transfer parsing logic here
+    const swapRegex = /(swapped|transferred) ([\d.]+) (\w+) for ([\d.]+) (\w+)/
     const swapMatch = transaction.description.match(swapRegex)
     
     if (swapMatch) {
-      const [_, _fromAmount, _fromToken, toAmount, toToken] = swapMatch
+      const action = swapMatch[1]
+      const fromAmount = swapMatch[2]
+      const fromToken = swapMatch[3]
+      const toAmount = swapMatch[4]
+      const toToken = swapMatch[5]
+      
+      trade.action = action
+      trade.fromAmount = parseFloat(fromAmount)
+      trade.fromToken = fromToken.toUpperCase() === 'SOL' ? null : fromToken
       trade.amount = parseFloat(toAmount)
       trade.token = toToken.toUpperCase() === 'SOL' ? null : toToken
     }
