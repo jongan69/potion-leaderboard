@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { tradersData } from "../../../../traders";
 import { mockData } from "../../../../mockData";
 
+// Add cache configuration
+export const revalidate = 300; // Cache for 5 minutes
+
 export async function GET() {
     try {
         // Function to fetch twitter followers
@@ -9,13 +12,14 @@ export async function GET() {
             try {
                 const response = await fetch('https://soltrendio.com/api/premium/twitter-followers', {
                     method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username })
-            })
-            const data = await response.json()
-            return data || 0 // Add fallback to 0 if no followers returned
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username })
+                })
+                if (!response.ok) return 0; 
+                const data = await response.json()
+                return data || 0 // Add fallback to 0 if no followers returned
             } catch (error) {
                 console.error('Error fetching followers:', error);
                 return 0;
@@ -26,15 +30,13 @@ export async function GET() {
         const getPnl = async (wallet: string) => {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pnl?walletAddress=${wallet}`)
-            const data = await response.json()
-            return data.usdPnl || 0 // Add fallback to 0 if no pnl returned
+                const data = await response.json()
+                return data.usdPnl || 0 // Add fallback to 0 if no pnl returned
             } catch (error) {
                 console.error('Error fetching pnl:', error);
                 return 0;
             }
         }
-
-
 
         // Fetch followers and PNL for all traders
         const tradersWithData = await Promise.all(
@@ -55,14 +57,28 @@ export async function GET() {
             })
         )
 
-        return NextResponse.json({
+        // Add cache-control header to the response
+        const response = NextResponse.json({
             traders: tradersWithData
-        }, { status: 200 });
+        }, {
+            status: 200,
+            headers: {
+                'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=599'
+            }
+        });
+
+        return response;
     } catch (error: unknown) {
-        console.error('Error fetching PNL:', error);
-        return NextResponse.json({
-            error: 'Internal server error while fetching PNL',
-            errorMessage: (error as Error).message
-        }, { status: 500 });
+        console.error('Error fetching traders:', error);
+        const errorResponse = NextResponse.json({
+            traders: tradersData
+        }, {
+            status: 500,
+            headers: {
+                'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=119'
+            }
+        });
+
+        return errorResponse;
     }
 }

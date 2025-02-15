@@ -7,9 +7,27 @@ const INITIAL_BATCH_SIZE = 100; // Reduced from 500
 const MAX_TRANSACTIONS = 1000; // Limit total historical transactions
 const CONCURRENT_REQUESTS = 20; // Number of parallel requests
 
+// Cache duration in seconds
+const CACHE_DURATION = 300; // 5 minutes
+
 interface AccountData {
     account: string;
     nativeBalanceChange: number;
+}
+
+// Add cache helper function
+async function fetchWithCache(url: string, options: RequestInit = {}) {
+    const response = await fetch(url, {
+        ...options,
+        next: {
+            revalidate: CACHE_DURATION
+        }
+    });
+    
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
 }
 
 async function calculateTotalPnL(walletAddress: PublicKey) {
@@ -33,15 +51,13 @@ async function calculateTotalPnL(walletAddress: PublicKey) {
         const currentChunks = chunks.slice(i, i + CONCURRENT_REQUESTS);
         
         const results = await Promise.all(currentChunks.map(async chunk => {
-            const res = await fetch(`https://api.helius.xyz/v0/transactions?api-key=${process.env.HELIUS_KEY}`, {
+            // Use fetchWithCache instead of fetch
+            const txnArr = await fetchWithCache(`https://api.helius.xyz/v0/transactions?api-key=${process.env.HELIUS_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ transactions: chunk })
             });
-
-            if (!res.ok) return 0;
-
-            const txnArr = await res.json();
+            
             let chunkPnl = 0;
             
             for (const txn of txnArr) {
@@ -73,13 +89,30 @@ export async function GET(req: Request) {
         if (!walletAddress) {
             return NextResponse.json({ error: 'Missing walletAddress parameter' }, { status: 400 });
         }
+
         const totalPnl = await calculateTotalPnL(new PublicKey(walletAddress));
-        const response = await fetch(`https://api.jup.ag/price/v2?ids=So11111111111111111111111111111111111111112`);
-        const data = await response.json();
-        const solanaPrice = data.data.So11111111111111111111111111111111111111112.price;
+        
+        // Use fetchWithCache for Solana price
+        const priceData = await fetchWithCache(
+            `https://api.jup.ag/price/v2?ids=So11111111111111111111111111111111111111112`
+        );
+        
+        const solanaPrice = priceData.data.So11111111111111111111111111111111111111112.price;
         const usdPnl = Number((totalPnl * solanaPrice).toFixed(2));
-        return NextResponse.json({ solanaPnl: totalPnl, usdPnl: usdPnl });
+
+        // Cache the response
+        return NextResponse.json(
+            { solanaPnl: totalPnl, usdPnl: usdPnl },
+            {
+                headers: {
+                    'Cache-Control': `s-maxage=${CACHE_DURATION}, stale-while-revalidate`
+                }
+            }
+        );
     } catch (error: unknown) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
+        return NextResponse.json(
+            { error: error instanceof Error ? error.message : 'Unknown error' },
+            { status: 500 }
+        );
     }
 }
