@@ -7,6 +7,7 @@ interface Trade {
   amount?: number
   timestamp?: number
   message?: string
+  label?: string
 }
 
 export function LiveTrades() {
@@ -47,10 +48,18 @@ export function LiveTrades() {
           if (trade.wallet) {
             return (
               <div key={index} className="flex justify-between items-center p-2 bg-secondary/50 rounded">
-                <span className="font-mono">
-                  {trade.wallet.slice(0, 6)}...{trade.wallet.slice(-4)}
-                </span>
-                <span>{trade.amount} SOL</span>
+                <div>
+                  <span className="font-medium mr-2">{trade.label}</span>
+                  <span className="font-mono text-sm text-muted-foreground">
+                    {trade.wallet.slice(0, 6)}...{trade.wallet.slice(-4)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{trade.amount} SOL</span>
+                  <span className="text-sm text-muted-foreground">
+                    {new Date(trade.timestamp || 0).toLocaleTimeString()}
+                  </span>
+                </div>
               </div>
             )
           }

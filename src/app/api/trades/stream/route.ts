@@ -1,3 +1,5 @@
+import { connectedClients } from '@/lib/store'
+
 export const runtime = 'edge'
 
 export async function GET() {
@@ -5,12 +7,16 @@ export async function GET() {
   const writer = stream.writable.getWriter()
   const encoder = new TextEncoder()
 
-  // Keep track of the connection
-  const connections = new Set()
-  connections.add(writer)
+  // Add this client to the shared store
+  connectedClients.add(writer)
 
   // Send initial message
   writer.write(encoder.encode(`data: ${JSON.stringify({ message: 'Connected to trade stream' })}\n\n`))
+
+  // Clean up when the connection closes
+  const closeHandler = () => {
+    connectedClients.delete(writer)
+  }
 
   return new Response(stream.readable, {
     headers: {
