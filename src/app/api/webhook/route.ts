@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { saveTrade } from '@/lib/store'
 import { tradersData } from "../../../../traders";
 import { pusher } from '@/lib/pusher'
+import { getTokenEnrichedData } from '@/lib/fetchTickerFromCa';
 
 
 export async function POST(request: Request) {
@@ -72,6 +73,15 @@ export async function POST(request: Request) {
       description: transaction.description,
       token: transaction.tokenTransfers ? transaction.tokenTransfers[0].mint : null,
       signature: transaction.signature,
+      tokenData: null as null | {
+        priceUsd: string;
+        volume24h: number;
+        marketCap: number;
+        liquidity: number;
+        priceChange24h: number;
+        holderCount?: number;
+        totalSupply?: string;
+      },
     }
 
     // Add swap/transfer parsing logic here
@@ -83,13 +93,25 @@ export async function POST(request: Request) {
       const fromAmount = swapMatch[2]
       const fromToken = swapMatch[3]
       const toAmount = swapMatch[4]
-      const toToken = swapMatch[5]
+      
+      // Get enriched data for the token
+      const tokenMint = transaction.tokenTransfers[0].mint;
+      const enrichedData = await getTokenEnrichedData(tokenMint);
       
       trade.action = action
       trade.fromAmount = parseFloat(fromAmount)
-      trade.fromToken = fromToken.toUpperCase() === 'SOL' ? null : fromToken
+      trade.fromToken = fromToken === 'SOL' ? null : fromToken
       trade.amount = parseFloat(toAmount)
-      trade.token = toToken.toUpperCase() === 'SOL' ? null : toToken
+      trade.token = enrichedData.ticker
+      trade.tokenData = {
+        priceUsd: enrichedData.priceUsd,
+        volume24h: enrichedData.volume24h,
+        marketCap: enrichedData.marketCap,
+        liquidity: enrichedData.liquidity,
+        priceChange24h: enrichedData.priceChange24h,
+        holderCount: enrichedData.holderCount,
+        totalSupply: enrichedData.totalSupply,
+      }
     }
 
     // Save to Redis and broadcast to clients
