@@ -21,9 +21,9 @@ export function Header() {
 
   // Get the current tab value based on the pathname
   const getCurrentTab = () => {
-    const path = pathname.split('/')[1] // Get the first segment after /
-    if (!path) return 'leaderboard'
-    return path
+    if (pathname === '/') return 'leaderboard'
+    const path = pathname.split('/')[1]
+    return path || 'leaderboard'
   }
 
   const handleTabChange = (value: string) => {
