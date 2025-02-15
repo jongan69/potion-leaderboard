@@ -23,44 +23,51 @@ export function LiveTrades() {
 
     const connect = () => {
       console.log('LiveTrades: Attempting to connect to SSE stream')
-      eventSource = new EventSource('/api/trades/stream')
-      
-      eventSource.onopen = () => {
-        console.log('LiveTrades: Successfully connected to SSE stream')
-        setStatus('connected')
-        reconnectAttempts = 0
-      }
-
-      eventSource.onmessage = (event) => {
-        try {
-          const trade = JSON.parse(event.data)
-          console.log('LiveTrades: Received trade data:', trade)
-          setTrades((prevTrades) => {
-            // Avoid duplicate connection messages
-            if (trade.message && prevTrades.some(t => t.message)) {
-              console.log('LiveTrades: Skipping duplicate connection message')
-              return prevTrades
-            }
-            return [trade, ...prevTrades].slice(0, 10)
-          })
-        } catch (error) {
-          console.error('LiveTrades: Error parsing trade data:', error)
-        }
-      }
-
-      eventSource.onerror = () => {
-        console.error(`LiveTrades: Connection error (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`)
-        setStatus('error')
-        eventSource?.close()
+      try {
+        eventSource = new EventSource('/api/trades/stream', {
+          withCredentials: true // Add this to ensure cookies are sent
+        })
         
-        if (reconnectAttempts < maxReconnectAttempts) {
-          reconnectAttempts++
-          const delay = Math.min(reconnectDelay * Math.pow(2, reconnectAttempts - 1), 10000)
-          console.log(`LiveTrades: Attempting reconnect in ${delay}ms`)
-          reconnectTimeout = setTimeout(connect, delay)
-        } else {
-          console.log('LiveTrades: Max reconnection attempts reached')
+        eventSource.onopen = () => {
+          console.log('LiveTrades: Successfully connected to SSE stream')
+          setStatus('connected')
+          reconnectAttempts = 0
         }
+
+        eventSource.onmessage = (event) => {
+          console.log('LiveTrades: Raw event received:', event)
+          try {
+            const trade = JSON.parse(event.data)
+            console.log('LiveTrades: Received trade data:', trade)
+            setTrades((prevTrades) => {
+              // Avoid duplicate connection messages
+              if (trade.message && prevTrades.some(t => t.message)) {
+                console.log('LiveTrades: Skipping duplicate connection message')
+                return prevTrades
+              }
+              return [trade, ...prevTrades].slice(0, 10)
+            })
+          } catch (error) {
+            console.error('LiveTrades: Error parsing trade data:', error, 'Raw data:', event.data)
+          }
+        }
+
+        eventSource.onerror = (error) => {
+          console.error('LiveTrades: Error event details:', error)
+          setStatus('error')
+          eventSource?.close()
+          
+          if (reconnectAttempts < maxReconnectAttempts) {
+            reconnectAttempts++
+            const delay = Math.min(reconnectDelay * Math.pow(2, reconnectAttempts - 1), 10000)
+            console.log(`LiveTrades: Attempting reconnect in ${delay}ms`)
+            reconnectTimeout = setTimeout(connect, delay)
+          } else {
+            console.log('LiveTrades: Max reconnection attempts reached')
+          }
+        }
+      } catch (error) {
+        console.error('LiveTrades: Error creating EventSource:', error)
       }
     }
 

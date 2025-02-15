@@ -13,13 +13,13 @@ export async function GET() {
   const heartbeat = setInterval(async () => {
     try {
       console.log('SSE: Sending heartbeat')
-      await writer.write(encoder.encode(': heartbeat\n\n'))
+      await writer.write(encoder.encode('data: {"type":"heartbeat"}\n\n'))
     } catch (error) {
       console.error('SSE: Error sending heartbeat:', error)
       clearInterval(heartbeat)
       connectedClients.delete(writer)
     }
-  }, 30000) // 30 second interval
+  }, 30000)
 
   try {
     // Add this client to the shared store
@@ -27,7 +27,8 @@ export async function GET() {
     console.log('SSE: Client added to connected clients. Total clients:', connectedClients.size)
 
     // Send initial message
-    await writer.write(encoder.encode(`data: ${JSON.stringify({ message: 'Connected to trade stream' })}\n\n`))
+    const initialMessage = JSON.stringify({ type: 'connection', message: 'Connected to trade stream' })
+    await writer.write(encoder.encode(`data: ${initialMessage}\n\n`))
     console.log('SSE: Sent initial connection message')
 
     // Create the response immediately
@@ -37,12 +38,15 @@ export async function GET() {
         'Cache-Control': 'no-cache, no-transform',
         'Connection': 'keep-alive',
         'X-Accel-Buffering': 'no',
+        // Add CORS headers if needed
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': 'true',
       },
     })
 
-    // Enhanced cleanup
-    stream.readable.cancel().then(() => {
-      console.log('SSE: Stream cancelled, cleaning up')
+    // Don't call cancel() immediately - this was likely causing the connection to close
+    response.body?.on('close', () => {
+      console.log('SSE: Stream closed, cleaning up')
       clearInterval(heartbeat)
       connectedClients.delete(writer)
       console.log('SSE: Client removed. Remaining clients:', connectedClients.size)
