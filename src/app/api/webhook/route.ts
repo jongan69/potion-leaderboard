@@ -73,14 +73,13 @@ export async function POST(request: Request) {
     await saveTrade(trade)
     
     const encoder = new TextEncoder()
-    const broadcastPromises = Array.from(connectedClients).map(client =>
-      client.write(encoder.encode(`data: ${JSON.stringify(trade)}\n\n`))
-        .catch(() => {
-          connectedClients.delete(client)
-        })
-    )
-    
-    await Promise.all(broadcastPromises)
+    Array.from(connectedClients).forEach(controller => {
+      try {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(trade)}\n\n`))
+      } catch (error) {
+        connectedClients.delete(controller)
+      }
+    })
 
     return NextResponse.json({ success: true })
   } catch (error) {

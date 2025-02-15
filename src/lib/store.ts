@@ -1,5 +1,5 @@
 import { Redis } from '@upstash/redis'
-import { WritableStreamDefaultWriter } from 'stream/web'
+import { WritableStreamDefaultWriter, ReadableStreamDefaultController } from 'stream/web'
 
 const redis = new Redis({
   url: `https://${process.env.UPSTASH_REDIS_REST_URL}`,
@@ -7,7 +7,7 @@ const redis = new Redis({
 })
 
 // In-memory store for active connections
-export const connectedClients = new Set<WritableStreamDefaultWriter>()
+export const connectedClients = new Set<ReadableStreamDefaultController<any>>()
 
 export interface TradeHistory {
   wallet: string
