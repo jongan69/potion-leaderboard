@@ -10,8 +10,8 @@ import './custom-wallet-styles.css'; // Custom wallet Button styles
 
 // Define a type for the context value
 type WalletContextType = {
-    wallet: any; // Replace 'any' with the actual type if known
-    setWallet: React.Dispatch<React.SetStateAction<any>>;
+    wallet: unknown; // Replace 'any' with the actual type if known
+    setWallet: React.Dispatch<React.SetStateAction<unknown>>;
 };
 
 // Initialize the context with the correct type
@@ -40,7 +40,7 @@ const WalletContextProvider = ({ children }: { children: React.ReactNode }) => {
         }),
     ];
 
-    const [wallet, setWallet] = useState<any>(null); // Replace 'any' with the actual type if known
+    const [wallet, setWallet] = useState<unknown>(null); // Replace 'any' with the actual type if known
 
     return (
         <ConnectionProvider endpoint={endpoint}>
