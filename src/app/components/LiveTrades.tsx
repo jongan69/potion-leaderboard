@@ -12,11 +12,17 @@ interface Trade {
 
 export function LiveTrades() {
   const [trades, setTrades] = useState<Trade[]>([])
+  const [status, setStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
 
   useEffect(() => {
     const eventSource = new EventSource('/api/trades/stream')
     let reconnectAttempts = 0
     const maxReconnectAttempts = 3
+
+    eventSource.onopen = () => {
+      setStatus('connected')
+      reconnectAttempts = 0 // Reset attempts on successful connection
+    }
 
     eventSource.onmessage = (event) => {
       try {
@@ -34,10 +40,11 @@ export function LiveTrades() {
     }
 
     eventSource.onerror = () => {
+      reconnectAttempts++
+      setStatus('error')
       if (reconnectAttempts >= maxReconnectAttempts) {
         eventSource.close()
       }
-      reconnectAttempts++
     }
 
     return () => {
@@ -47,7 +54,14 @@ export function LiveTrades() {
 
   return (
     <div className="rounded-lg border p-4">
-      <h2 className="text-lg font-semibold mb-4">Live Trades</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">Live Trades</h2>
+        <div className="text-sm">
+          {status === 'connecting' && <span className="text-yellow-500">Connecting...</span>}
+          {status === 'connected' && <span className="text-green-500">Connected</span>}
+          {status === 'error' && <span className="text-red-500">Connection error</span>}
+        </div>
+      </div>
       <div className="space-y-2">
         {trades.map((trade, index) => {
           // Handle connection message

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { connectedClients } from '@/lib/store'
+import { connectedClients, saveTrade } from '@/lib/store'
 import { tradersData } from "../../../../traders";
 
 
@@ -23,7 +23,10 @@ export async function POST(request: Request) {
     label: matchingTrader?.userName || 'Unknown'
   }
 
-  // Broadcast to all connected clients
+  // Save to MongoDB
+  await saveTrade(trade)
+
+  // Broadcast to live clients
   const encoder = new TextEncoder()
   connectedClients.forEach(client => {
     client.write(encoder.encode(`data: ${JSON.stringify(trade)}\n\n`))

@@ -3,26 +3,37 @@ import { connectedClients } from '@/lib/store'
 export const runtime = 'edge'
 
 export async function GET(request: Request) {
-  // Check if this is a reconnection
-  const isReconnection = request.headers.get('last-event-id') !== null
-
   const stream = new TransformStream()
   const writer = stream.writable.getWriter()
   const encoder = new TextEncoder()
 
-  // Add this client to the shared store
-  connectedClients.add(writer)
+  try {
+    // Add this client to the shared store
+    connectedClients.add(writer)
 
-  // Only send connection message on first connect
-  if (!isReconnection) {
-    writer.write(encoder.encode(`data: ${JSON.stringify({ message: 'Connected to trade stream' })}\n\n`))
+    // Send initial message with retry interval
+    const initialMessage = `retry: 1000\ndata: ${JSON.stringify({ message: 'Connected to trade stream' })}\n\n`
+    await writer.write(encoder.encode(initialMessage))
+
+    // Keep the connection alive with a ping every 30 seconds
+    const keepAlive = setInterval(async () => {
+      try {
+        await writer.write(encoder.encode(`: ping\n\n`))
+      } catch {
+        clearInterval(keepAlive)
+        connectedClients.delete(writer)
+      }
+    }, 30000)
+
+    return new Response(stream.readable, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    })
+  } catch (error) {
+    connectedClients.delete(writer)
+    return new Response('Stream error', { status: 500 })
   }
-
-  return new Response(stream.readable, {
-    headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
-    },
-  })
 } 
