@@ -16,15 +16,35 @@ export async function POST(request: Request) {
     }
 
     console.log('Webhook data:', webhookData)
-    console.log('Fee payer:', transaction.feePayer)
+    console.log('Description:', transaction.description)
     
-    // Find matching trader data
+    // Parse the description to get sender and receiver addresses
+    const description = transaction.description
+    const addressRegex = /([1-9A-HJ-NP-Za-km-z]{32,44})/g
+    const addresses = description.match(addressRegex) || []
+    const [senderAddress, receiverAddress] = addresses
+    
+    console.log('Parsed addresses:', { senderAddress, receiverAddress })
+    
+    // Find matching trader data based on either sending or receiving
     const matchingTrader = tradersData.find(trader => {
-      console.log('Comparing trader wallet:', trader.wallet.toLowerCase(), 'with feePayer:', transaction.feePayer.toLowerCase())
-      return trader.wallet.toLowerCase() === transaction.feePayer.toLowerCase()
+      const traderWallet = trader.wallet.toLowerCase()
+      const isSender = senderAddress?.toLowerCase() === traderWallet
+      const isReceiver = receiverAddress?.toLowerCase() === traderWallet
+      
+      console.log('Comparing trader:', {
+        traderWallet,
+        isSender,
+        isReceiver,
+        senderAddress,
+        receiverAddress
+      })
+      
+      return isSender || isReceiver
     })
     
     console.log('Matching trader:', matchingTrader)
+    
     // Get amount from nativeTransfers
     const amount = transaction.nativeTransfers[0]?.amount || 0
     
