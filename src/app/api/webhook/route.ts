@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server'
-
-// This would be better stored in a database or message queue in production
-const connectedClients = new Set<WritableStreamDefaultWriter>()
+import { connectedClients } from '@/lib/store'
 
 export async function POST(request: Request) {
   const data = await request.json()
@@ -23,7 +21,4 @@ export async function POST(request: Request) {
   })
 
   return NextResponse.json({ success: true })
-}
-
-// Export for use in the SSE endpoint
-export { connectedClients } 
+} 
