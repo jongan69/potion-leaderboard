@@ -15,14 +15,29 @@ export function LiveTrades() {
 
   useEffect(() => {
     const eventSource = new EventSource('/api/trades/stream')
+    let reconnectAttempts = 0
+    const maxReconnectAttempts = 3
 
     eventSource.onmessage = (event) => {
       try {
         const trade = JSON.parse(event.data)
-        setTrades((prevTrades) => [trade, ...prevTrades].slice(0, 10)) // Keep last 10 trades
+        setTrades((prevTrades) => {
+          // Avoid duplicate connection messages
+          if (trade.message && prevTrades.some(t => t.message)) {
+            return prevTrades
+          }
+          return [trade, ...prevTrades].slice(0, 10)
+        })
       } catch (error) {
         console.error('Error parsing trade data:', error)
       }
+    }
+
+    eventSource.onerror = () => {
+      if (reconnectAttempts >= maxReconnectAttempts) {
+        eventSource.close()
+      }
+      reconnectAttempts++
     }
 
     return () => {

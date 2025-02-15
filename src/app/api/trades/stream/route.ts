@@ -2,7 +2,10 @@ import { connectedClients } from '@/lib/store'
 
 export const runtime = 'edge'
 
-export async function GET() {
+export async function GET(request: Request) {
+  // Check if this is a reconnection
+  const isReconnection = request.headers.get('last-event-id') !== null
+
   const stream = new TransformStream()
   const writer = stream.writable.getWriter()
   const encoder = new TextEncoder()
@@ -10,8 +13,10 @@ export async function GET() {
   // Add this client to the shared store
   connectedClients.add(writer)
 
-  // Send initial message
-  writer.write(encoder.encode(`data: ${JSON.stringify({ message: 'Connected to trade stream' })}\n\n`))
+  // Only send connection message on first connect
+  if (!isReconnection) {
+    writer.write(encoder.encode(`data: ${JSON.stringify({ message: 'Connected to trade stream' })}\n\n`))
+  }
 
   return new Response(stream.readable, {
     headers: {
