@@ -32,7 +32,10 @@ export function LiveTrades() {
 
     // Listen for new trades
     channel.bind('new-trade', (trade: Trade) => {
-      setTrades((prevTrades) => [trade, ...prevTrades].slice(0, 10))
+      setTrades((prevTrades) => [...prevTrades, trade]
+        .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+        .slice(0, 10)
+      )
     })
 
     // Update connection status
@@ -100,7 +103,7 @@ export function LiveTrades() {
       </div>
       <div className="space-y-3">
         <AnimatePresence initial={false}>
-          {trades.map((trade, index) => (
+          {trades.map((trade) => (
             <motion.div
               key={trade.timestamp}
               initial={{ opacity: 0, y: -20 }}
