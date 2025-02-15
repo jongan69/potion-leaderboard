@@ -9,6 +9,7 @@ import {
   // Pencil, 
   // Trash2,
   // ArrowUpRight
+  Copy
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { UserSchema } from "./userSchema";
+import { toast } from "react-hot-toast";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -59,6 +61,19 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
               <Eye className="w-4 h-4 text-blue-500" />
               {<span className="ml-2">{"View Ceilo Profile"}</span>}
             </Link>
+          </Button>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Button variant={"ghost"} size={"sm"} className={"justify-start w-full"} asChild>
+            <Button
+              variant={"ghost"} size={"sm"} className={"justify-start w-full"}
+              onClick={() => {
+                navigator.clipboard.writeText(user.wallet!);
+                toast.success("Wallet address copied to clipboard");
+              }}>
+              <Copy className="w-4 h-4 text-blue-500" />
+              {<span className="ml-2">{"Copy Wallet Address"}</span>}
+            </Button>
           </Button>
         </DropdownMenuItem>
 
