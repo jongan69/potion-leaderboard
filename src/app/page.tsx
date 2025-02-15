@@ -14,12 +14,15 @@ export default async function Home() {
     <div className="container min-h-screen flex flex-col px-10 py-1">
       <Header />
       <div >
-        <Suspense fallback={<div>Loading...</div>}>
-          {wallets && <DataTable data={wallets} columns={columns} />}
-        </Suspense>
+        
+        {wallets.length > 0 &&
+          <Suspense fallback={<div>Loading...</div>}>
+            <DataTable data={wallets} columns={columns} />
+          </Suspense>
+        }
 
         <Suspense fallback={<div>Loading...</div>}>
-            <LiveTrades />
+          <LiveTrades />
         </Suspense>
       </div>
     </div>

@@ -1,6 +1,6 @@
 type Props = {
     params: Promise<{ walletAddress: string }>
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+    // searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 export default async function UserPage(props: Props) {
