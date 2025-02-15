@@ -76,14 +76,14 @@ export async function POST(request: Request) {
     Array.from(connectedClients).forEach(controller => {
       try {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(trade)}\n\n`))
-      } catch (error) {
+      } catch {
         connectedClients.delete(controller)
       }
     })
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Webhook error:', error)
-    return NextResponse.json({ error: 'Internal server error: ' + error }, { status: 500 })
+  } catch (err) {
+    console.error('Webhook error:', err)
+    return NextResponse.json({ error: 'Internal server error: ' + err }, { status: 500 })
   }
 } 
