@@ -19,6 +19,7 @@ interface Trade {
 export function LiveTrades() {
   const [trades, setTrades] = useState<Trade[]>([])
   const [status, setStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
+  const [, setRefreshKey] = useState(0)
 
   useEffect(() => {
     // Initialize Pusher
@@ -43,12 +44,34 @@ export function LiveTrades() {
       setStatus('error')
     })
 
+    // Add periodic refresh to update opacities and remove old trades
+    const refreshInterval = setInterval(() => {
+      setRefreshKey(key => key + 1)
+      setTrades(prevTrades => {
+        const fiveMinutesAgo = Date.now() - (5 * 60 * 1000)
+        return prevTrades.filter(trade => 
+          (trade.timestamp || 0) > fiveMinutesAgo
+        )
+      })
+    }, 1000)
+
     return () => {
       channel.unbind_all()
       channel.unsubscribe()
       pusher.disconnect()
+      clearInterval(refreshInterval)
     }
   }, [])
+
+  const getTradeOpacity = (timestamp?: number) => {
+    if (!timestamp) return 1
+    const ageInMs = Date.now() - timestamp
+    const fiveMinutesInMs = 5 * 60 * 1000
+    
+    // Linear fade from 1 to 0.3 over 5 minutes
+    const opacity = Math.max(0.3, 1 - (ageInMs / fiveMinutesInMs) * 0.7)
+    return opacity
+  }
 
   return (
     <div className="rounded-xl border bg-card/50 backdrop-blur-sm p-6 shadow-sm">
@@ -81,7 +104,10 @@ export function LiveTrades() {
             <motion.div
               key={trade.timestamp}
               initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={{ 
+                opacity: getTradeOpacity(trade.timestamp), 
+                y: 0 
+              }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.2 }}
               className="flex justify-between items-center p-3 bg-card rounded-lg border border-border/50 hover:bg-accent/50 transition-colors"
