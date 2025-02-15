@@ -71,7 +71,6 @@ export async function POST(request: Request) {
       description: transaction.description,
       token: transaction.tokenTransfers ? transaction.tokenTransfers[0].mint : null,
       signature: transaction.signature,
-      txHash: transaction.transactionHash
     }
 
     // Save to Redis and broadcast to clients

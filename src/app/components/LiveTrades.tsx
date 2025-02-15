@@ -10,7 +10,6 @@ interface Trade {
   amount?: number
   timestamp?: number
   label?: string
-  txHash?: string
   token?: string
   description?: string
   signature?: string
@@ -115,26 +114,24 @@ export function LiveTrades() {
               transition={{ duration: 0.2 }}
               className="flex justify-between items-center p-3 bg-card rounded-lg border border-border/50 hover:bg-accent/50 transition-colors"
             >
-              <Link href={`https://solscan.io/tx/${trade.txHash}`} target="_blank" className="w-full">
-                <div className="flex items-center gap-3">
-
-                  <div className="flex flex-col">
-                    <span className="font-medium text-sm">{trade.label}</span>
+              <Link href={`https://solscan.io/tx/${trade.signature}`} target="_blank" className="w-full">
+                <div className="flex justify-between w-full">
+                  <div className="flex flex-col min-w-0 flex-1 mr-4">
+                    <span className="font-medium text-sm truncate">{trade.label}</span>
                     <span className="font-mono text-xs text-muted-foreground">
                       {trade.wallet?.slice(0, 6)}...{trade.wallet?.slice(-4)}
                     </span>
-                    <span className="font-mono text-xs text-muted-foreground">
+                    <span className="font-mono text-xs text-muted-foreground truncate max-w-[300px]">
                       {trade.description}
                     </span>
                   </div>
 
-                </div>
-
-                <div className="flex flex-col items-end gap-1">
-                  <span className="font-medium text-sm">{trade.amount} SOL</span>
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(trade.timestamp || 0).toLocaleTimeString()}
-                  </span>
+                  <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                    <span className="font-medium text-sm whitespace-nowrap">{trade.amount} SOL</span>
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+                      {new Date(trade.timestamp || 0).toLocaleTimeString()}
+                    </span>
+                  </div>
                 </div>
               </Link>
             </motion.div>
