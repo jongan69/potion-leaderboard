@@ -17,7 +17,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required transaction data' }, { status: 400 })
     }
 
-    console.log('Webhook data:', webhookData)
+    console.log('Webhook data:', JSON.stringify(webhookData, null, 2))
     console.log('Description:', transaction.description)
 
     // Get amount and addresses from either native or token transfers
