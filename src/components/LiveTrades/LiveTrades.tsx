@@ -45,22 +45,22 @@ export function LiveTrades() {
   }, [])
 
   return (
-    <div className="rounded-xl border bg-card/50 backdrop-blur-sm p-6 shadow-sm">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold tracking-tight">Live Trades</h2>
+    <div className="rounded border bg-card p-4 shadow-md flex flex-col w-full mt-10">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-bold">Live Trades</h2>
         <ConnectionStatus status={status} />
       </div>
       
-      <div className="space-y-3">
+      <div className="flex-1 overflow-y-auto space-y-3 pr-2">
         <AnimatePresence initial={false}>
-          {trades.map((trade) => (
-            <TradeCard key={trade.timestamp} trade={trade} />
+          {trades.slice(0, 15).map((trade) => (
+            <TradeCard key={trade.signature} trade={trade} />
           ))}
         </AnimatePresence>
         
         {trades.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">
-            <p>Waiting for trades...</p>
+          <div className="text-center py-4 text-gray-500">
+            <p className="text-sm">Waiting for trades...</p>
           </div>
         )}
       </div>

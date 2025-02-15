@@ -11,7 +11,8 @@ export const connectedClients = new Set<ReadableStreamDefaultController<Uint8Arr
 
 export interface TradeHistory {
   wallet: string
-  amount: number
+  toAmount: number
+  fromAmount: number
   timestamp: number
   label: string
 }

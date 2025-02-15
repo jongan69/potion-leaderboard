@@ -1,3 +1,4 @@
+'use client'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Trade } from '@/types/trade'
@@ -34,7 +35,7 @@ export function TradeCard({ trade }: TradeCardProps) {
             </span>
             {trade.action ? (
               <span className="font-mono text-xs text-muted-foreground truncate">
-                {trade.fromAmount} {trade.fromToken || 'SOL'} → {trade.amount} {trade.token}
+                {trade.fromAmount} {trade.fromToken} → {trade.toAmount} {trade.toToken}
               </span>
             ) : (
               <span className="font-mono text-xs text-muted-foreground truncate">
@@ -44,7 +45,7 @@ export function TradeCard({ trade }: TradeCardProps) {
           </div>
           <div className="flex flex-col items-end gap-1 flex-shrink-0">
             <span className="font-medium text-sm whitespace-nowrap">
-              {trade.amount} {trade.token}
+              {trade.toAmount} {trade.toToken}
             </span>
             {trade.tokenData && (
               <span className="text-xs text-muted-foreground whitespace-nowrap">

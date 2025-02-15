@@ -28,9 +28,18 @@ interface Trade {
   action: string | null
   fromAmount: number
   fromToken: string | null
-  amount: number
-  token: string | null
-  tokenData: {
+  toAmount: number
+  toToken: string | null
+  fromTokenData: {
+    priceUsd: string
+    volume24h: number
+    marketCap: number
+    liquidity: number
+    priceChange24h: number
+    holderCount?: number
+    totalSupply?: string
+  } | null
+  toTokenData: {
     priceUsd: string
     volume24h: number
     marketCap: number
@@ -62,10 +71,13 @@ export async function POST(request: Request) {
     // Create base trade object
     const trade = {
       wallet: transaction.feePayer,
-      amount,
+      toAmount: amount,
       action: null,
       fromAmount: 0,
       fromToken: null,
+      toToken: null,
+      fromTokenData: null,
+      toTokenData: null,
       timestamp: transaction.timestamp * 1000,
       label: matchingTrader?.userName || 'Unknown',
       description: transaction.description,
@@ -127,25 +139,33 @@ function findMatchingTrader(senderAddress?: string, receiverAddress?: string) {
 async function enrichTradeWithSwapDetails(trade: Trade, transaction: Transaction) {
   const swapRegex = /(swapped|transferred) ([\d.]+) (\w+) for ([\d.]+) (\w+)/
   const swapMatch = transaction.description.match(swapRegex)
-  
+
   if (swapMatch) {
     const [, action, fromAmount, fromToken, toAmount] = swapMatch
-    const tokenMint = transaction.tokenTransfers![0].mint
-    const enrichedData = await getTokenEnrichedData(tokenMint)
-    
+    const fromTokenMint = transaction.tokenTransfers![0].mint
+    const toTokenMint = transaction.tokenTransfers![1].mint
+    const enrichedFromData = await getTokenEnrichedData(fromTokenMint)
+    const enrichedToData = await getTokenEnrichedData(toTokenMint)
     trade.action = action
     trade.fromAmount = parseFloat(fromAmount)
-    trade.fromToken = fromToken === 'SOL' ? null : fromToken
-    trade.amount = parseFloat(toAmount)
-    trade.token = enrichedData.ticker
-    trade.tokenData = {
-      priceUsd: enrichedData.priceUsd,
-      volume24h: enrichedData.volume24h,
-      marketCap: enrichedData.marketCap,
-      liquidity: enrichedData.liquidity,
-      priceChange24h: enrichedData.priceChange24h,
-      holderCount: enrichedData.holderCount,
-      totalSupply: enrichedData.totalSupply,
+    trade.fromToken = fromToken === 'SOL' ? 'SOL' : enrichedFromData.ticker
+    trade.toAmount = parseFloat(toAmount)
+    trade.fromTokenData = {
+      priceUsd: enrichedFromData.priceUsd,
+      volume24h: enrichedFromData.volume24h,
+      marketCap: enrichedFromData.marketCap,
+      liquidity: enrichedFromData.liquidity,
+      priceChange24h: enrichedFromData.priceChange24h,
+    }
+    trade.toToken = enrichedToData.ticker
+    trade.toTokenData = {
+      priceUsd: enrichedToData.priceUsd,
+      volume24h: enrichedToData.volume24h,
+      marketCap: enrichedToData.marketCap,
+      liquidity: enrichedToData.liquidity,
+      priceChange24h: enrichedToData.priceChange24h,
+      holderCount: enrichedToData.holderCount,
+      totalSupply: enrichedToData.totalSupply,
     }
   }
 } 

@@ -9,6 +9,8 @@ export interface Trade {
   action: string | null
   fromAmount: number
   fromToken: string | null
+  toToken: string | null
+  toAmount: number
   tokenData: {
     priceUsd: string
     volume24h: number

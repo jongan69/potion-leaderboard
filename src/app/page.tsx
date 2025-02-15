@@ -11,18 +11,16 @@ export default async function Home() {
   // console.log(wallets);
   // In Our example we use local data
   return (
-    <div className="container p-2">
+    <div className="container min-h-screen flex flex-col px-10 py-1">
       <Header />
-      <div className="grid grid-cols-1 md:grid-cols-[1fr,300px] gap-4">
-    
+      <div >
         <Suspense fallback={<div>Loading...</div>}>
           {wallets && <DataTable data={wallets} columns={columns} />}
         </Suspense>
 
         <Suspense fallback={<div>Loading...</div>}>
-          <LiveTrades />
+            <LiveTrades />
         </Suspense>
-
       </div>
     </div>
   );
