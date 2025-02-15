@@ -44,14 +44,6 @@ export async function GET() {
       },
     })
 
-    // Don't call cancel() immediately - this was likely causing the connection to close
-    response.body?.on('close', () => {
-      console.log('SSE: Stream closed, cleaning up')
-      clearInterval(heartbeat)
-      connectedClients.delete(writer)
-      console.log('SSE: Client removed. Remaining clients:', connectedClients.size)
-    })
-
     return response
   } catch (err) {
     console.error('SSE: Stream error:', err)

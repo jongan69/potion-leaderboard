@@ -17,15 +17,31 @@ export async function POST(request: Request) {
 
     console.log('Webhook data:', webhookData)
     console.log('Description:', transaction.description)
-    
-    // Parse the description to get sender and receiver addresses
-    const description = transaction.description
-    const addressRegex = /([1-9A-HJ-NP-Za-km-z]{32,44})/g
-    const addresses = description.match(addressRegex) || []
-    const [senderAddress, receiverAddress] = addresses
-    
-    console.log('Parsed addresses:', { senderAddress, receiverAddress })
-    
+
+    // Get amount and addresses from either native or token transfers
+    let amount = 0
+    let senderAddress = ''
+    let receiverAddress = ''
+
+    if (transaction.tokenTransfers && transaction.tokenTransfers.length > 0) {
+      const tokenTransfer = transaction.tokenTransfers[0]
+      amount = tokenTransfer.amount || 0
+      senderAddress = tokenTransfer.fromUserAccount
+      receiverAddress = tokenTransfer.toUserAccount
+    } else if (transaction.nativeTransfers && transaction.nativeTransfers.length > 0) {
+      const nativeTransfer = transaction.nativeTransfers[0]
+      amount = nativeTransfer.amount || 0
+      // Parse addresses from description for native transfers
+      const addressRegex = /([1-9A-HJ-NP-Za-km-z]{32,44})/g
+      const parsedAddresses = transaction.description.match(addressRegex) || []
+      if (parsedAddresses.length >= 2) {
+        senderAddress = parsedAddresses[0]
+        receiverAddress = parsedAddresses[1]
+      }
+    }
+
+    console.log('Parsed transfer details:', { amount, senderAddress, receiverAddress })
+
     // Find matching trader data based on either sending or receiving
     const matchingTrader = tradersData.find(trader => {
       const traderWallet = trader.wallet.toLowerCase()
@@ -42,16 +58,13 @@ export async function POST(request: Request) {
       
       return isSender || isReceiver
     })
-    
+
     console.log('Matching trader:', matchingTrader)
-    
-    // Get amount from nativeTransfers
-    const amount = transaction.nativeTransfers[0]?.amount || 0
-    
-    // Process the webhook data from Helius
+
+    // Process the webhook data
     const trade = {
       wallet: transaction.feePayer,
-      amount: amount / 1e9, // Convert lamports to SOL
+      amount: transaction.tokenTransfers ? amount : amount / 1e9, // Only convert to SOL for native transfers
       timestamp: transaction.timestamp * 1000,
       label: matchingTrader?.userName || 'Unknown'
     }
