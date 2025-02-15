@@ -2,12 +2,15 @@
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs" 
 import Image from "next/image"
-import { usePathname, useRouter } from "next/navigation"
+import { 
+  // usePathname, 
+  useRouter 
+} from "next/navigation"
 import { ModeToggle } from "@/components/ui/toggle-theme"
 
 export function Header() {
   const router = useRouter()
-  const pathname = usePathname()
+  // const pathname = usePathname()
 
   return (
     <div className="flex items-center py-4">

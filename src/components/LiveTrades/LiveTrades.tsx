@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Pusher from 'pusher-js'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import { Trade } from '@/types/trade'
 import { ConnectionStatus } from './ConnectionStatus'
 import { TradeCard } from './TradeCard'
