@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { tradersData } from "../../../../traders";
+import { mockData } from "../../../../mockData";
 
 export async function GET() {
     try {
@@ -47,7 +48,9 @@ export async function GET() {
                 return {
                     ...trader,
                     followers,
-                    pnl // This will override the hardcoded PNL with real-time data
+                    pnl,
+                    // Mock data for UI matching
+                    ...mockData
                 }
             })
         )

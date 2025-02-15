@@ -8,10 +8,31 @@ import { DataTableRowActions } from "@/components/WalletTable/data-table-row-act
 import { Wallet } from "@/lib/types";
 import { usersStatus } from "./definitions";
 import Image from "next/image";
+
 export const columns: ColumnDef<Wallet>[] = [
   {
+    accessorKey: "rank",
+    header: () => <h1>Rank</h1>,
+    cell: ({ row, table }) => {
+      // Get all rows sorted by PNL
+      const sortedRows = [...table.getPreFilteredRowModel().rows].sort(
+        (a, b) => (b.getValue("pnl") as number) - (a.getValue("pnl") as number)
+      );
+      
+      const rank = sortedRows.findIndex(r => r.id === row.id) + 1;
+      
+      return <div className="text-center">{rank}</div>;
+    },
+    sortingFn: (rowA, rowB) => {
+      const aRank = rowA.getValue("pnl") as number;
+      const bRank = rowB.getValue("pnl") as number;
+      return bRank - aRank;
+    },
+    sortDescFirst: true,
+  },
+  {
     accessorKey: "profilePic",
-    header: () => <h1> Profile Pic </h1>,
+    header: () => <h1>Trader</h1>,
     cell: ({ row }) => {
       return <Image src={`https://avatar.iran.liara.run/username?username=${row.getValue("xHandle")}`} alt="Profile Pic" width={32} height={32} />;
     },

@@ -26,7 +26,7 @@ export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps
           {"See Columns"}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px] bg-gray-900">
+      <DropdownMenuContent align="end" className="w-[160px] bg-[#25223D]">
         <DropdownMenuLabel>{"Edit Columns"}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table

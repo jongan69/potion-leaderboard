@@ -36,7 +36,7 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
           <span className="sr-only">{"Open Menu"}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-gray-900" align="end">
+      <DropdownMenuContent className="bg-[#25223D]" align="end">
         <DropdownMenuItem>
           <Button variant={"ghost"} size={"sm"} className={"justify-start w-full"} asChild>
             <Link href={`https://solscan.io/address/${user.wallet}`} target="_blank">
