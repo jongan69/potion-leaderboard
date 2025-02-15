@@ -2,7 +2,7 @@ import { connectedClients } from '@/lib/store'
 
 export const runtime = 'edge'
 
-export async function GET(request: Request) {
+export async function GET() {
   const stream = new TransformStream()
   const writer = stream.writable.getWriter()
   const encoder = new TextEncoder()
