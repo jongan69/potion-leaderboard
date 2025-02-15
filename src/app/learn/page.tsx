@@ -1,5 +1,3 @@
-import { Header } from "@/components/Header/Header";
-
 export default function LearnPage() {
   return (
     <div className="container p-2">

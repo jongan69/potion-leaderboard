@@ -3,7 +3,6 @@ import DataTable from "@/components/WalletTable/data-table";
 import { fetchWallets } from "@/lib/fetchWallets";
 import { LiveTrades } from "@/components/LiveTrades/LiveTrades";
 import { Suspense } from "react";
-import { Header } from "@/components/Header/Header";
 
 export default async function Home() {
   // This is where you would fetch external data:
