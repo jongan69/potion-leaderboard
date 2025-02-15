@@ -79,7 +79,7 @@ export async function GET(req: Request) {
         const solanaPrice = data.data.So11111111111111111111111111111111111111112.price;
         const usdPnl = Number((totalPnl * solanaPrice).toFixed(2));
         return NextResponse.json({ solanaPnl: totalPnl, usdPnl: usdPnl });
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    } catch (error: unknown) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
     }
 }
