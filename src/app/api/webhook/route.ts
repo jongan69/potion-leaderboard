@@ -15,13 +15,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required transaction data' }, { status: 400 })
     }
 
-    console.log(webhookData)
+    console.log('Webhook data:', webhookData)
+    console.log('Fee payer:', transaction.feePayer)
     
     // Find matching trader data
-    const matchingTrader = tradersData.find(trader => 
-      trader.wallet === transaction.feePayer
-    )
-    console.log(matchingTrader)
+    const matchingTrader = tradersData.find(trader => {
+      console.log('Comparing trader wallet:', trader.wallet.toLowerCase(), 'with feePayer:', transaction.feePayer.toLowerCase())
+      return trader.wallet.toLowerCase() === transaction.feePayer.toLowerCase()
+    })
+    
+    console.log('Matching trader:', matchingTrader)
     // Get amount from nativeTransfers
     const amount = transaction.nativeTransfers[0]?.amount || 0
     
