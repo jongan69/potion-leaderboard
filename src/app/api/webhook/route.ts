@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
-import { connectedClients, saveTrade } from '@/lib/store'
+import { saveTrade } from '@/lib/store'
 import { tradersData } from "../../../../traders";
+import { pusher } from '@/lib/pusher'
 
 
 export async function POST(request: Request) {
@@ -71,15 +72,7 @@ export async function POST(request: Request) {
 
     // Save to Redis and broadcast to clients
     await saveTrade(trade)
-    
-    const encoder = new TextEncoder()
-    Array.from(connectedClients).forEach(controller => {
-      try {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(trade)}\n\n`))
-      } catch {
-        connectedClients.delete(controller)
-      }
-    })
+    await pusher.trigger('trades', 'new-trade', trade)
 
     return NextResponse.json({ success: true })
   } catch (err) {
