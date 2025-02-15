@@ -24,20 +24,8 @@ export const UserSchema = z.object({
 
   userName: z.string({}).trim().min(5),
 
-  phone: z.string({}).trim().min(8),
-
-  email: z.string({}).email().trim().or(z.literal("")).optional(),
-
-  location: z.string({}).trim().or(z.literal("")).optional(),
-
   status: z.nativeEnum(UserStatus, {}),
-
-  otherInformation: z.string({}).trim().or(z.literal("")).optional(),
-
-  rtn: z.string({}).trim().or(z.literal("")).optional(),
-
-  image: z.string().or(z.literal("")).optional(),
-
+  
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
 });

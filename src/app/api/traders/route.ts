@@ -2,228 +2,144 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
     try {
+        // Function to fetch twitter followers
+        const getTwitterFollowers = async (username: string) => {
+            try {
+                const response = await fetch('https://soltrendio.com/api/premium/twitter-followers', {
+                    method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username })
+            })
+            const data = await response.json()
+            return data || 0 // Add fallback to 0 if no followers returned
+            } catch (error) {
+                console.error('Error fetching followers:', error);
+                return 0;
+            }
+        }
+
+        // Function to fetch cielo pnl
+        const getCieloPnl = async (wallet: string) => {
+            try {
+                const response = await fetch(`https://feed-api.cielo.finance/v1/pnl/tokens?wallet=${wallet}`, {
+                    method: 'GET',
+                    headers: {
+                    'Authorization': `Bearer ${process.env.CIELO_BEARER_TOKEN}`,
+                },
+            })
+            const data = await response.json()
+            return Number(data.data.total_pnl_usd.toFixed(2)) || 0 // Add fallback to 0 if no pnl returned
+            } catch (error) {
+                console.error('Error fetching pnl:', error);
+                return 0;
+            }
+        }
+
+        // Base traders data
+        const tradersData = [
+            {
+                id: "9953ed85-31a0-4db9-acc8-e25b76176443",
+                profilePic: "https://avatar.iran.liara.run/public",
+                wallet: "suqh5sHtr8HyJ7q8scBimULPkPpA557prMG47xCHQfK",
+                xHandle: "@Cupseyy",
+                userName: "Cupseyy",
+                status: "active",
+                createdAt: new Date("2024-02-07T23:35:52.087Z"),
+                updatedAt: new Date("2024-02-07T23:38:03.259Z"),
+            },
+            {
+                id: "328c2bef-d84b-44a2-b5ae-03bd6550c4c4",
+                profilePic: "https://avatar.iran.liara.run/public",
+                wallet: "8deJ9xeUvXSJwicYptA9mHsU2rN2pDx37KWzkDkEXhU6",
+                xHandle: "@CookerFlips",
+                userName: "CookerFlips",
+                status: "active",
+                createdAt: new Date("2024-02-07T23:35:52.087Z"),
+                updatedAt: new Date("2024-02-07T23:38:03.259Z"),
+            },
+            {
+                id: "9543e3a4-99f2-4fcb-ba5d-f2aaebff6716",
+                profilePic: "https://avatar.iran.liara.run/public",
+                wallet: "8zFZHuSRuDpuAR7J6FzwyF3vKNx4CVW3DFHJerQhc7Zd",
+                xHandle: "@traderpow",
+                userName: "traderpow",
+                status: "active",
+                createdAt: new Date("2024-02-07T23:35:52.087Z"),
+                updatedAt: new Date("2024-02-07T23:38:03.259Z"),
+            },
+            {
+                id: "bdcba306-57fa-4722-82e3-c4933b09e69b",
+                profilePic: "https://avatar.iran.liara.run/public",
+                wallet: "DfMxre4cKmvogbLrPigxmibVTTQDuzjdXojWzjCXXhzj",
+                xHandle: "@Euris_JT",
+                userName: "Euris_JT",
+                status: "active",
+                createdAt: new Date("2024-02-07T23:35:52.087Z"),
+                updatedAt: new Date("2024-02-07T23:38:03.259Z"),
+            },
+            {
+                id: "e643dbea-0ab2-4d3d-8bb8-63aedf027a66",
+                profilePic: "https://avatar.iran.liara.run/public",
+                wallet: "G5nxEXuFMfV74DSnsrSatqCW32F34XUnBeq3PfDS7w5E",
+                xHandle: "@FlippingProfits",
+                userName: "FlippingProfits",
+                status: "inactive",
+                createdAt: new Date("2024-02-07T23:35:52.087Z"),
+                updatedAt: new Date("2024-02-07T23:38:03.259Z"),
+            },
+            {
+                id: "e643dbea-0ab2-4d3d-8bb8-63aedf027a66",
+                profilePic: "https://avatar.iran.liara.run/public",
+                wallet: "7SDs3PjT2mswKQ7Zo4FTucn9gJdtuW4jaacPA65BseHS",
+                xHandle: "@joujou100x",
+                userName: "joujou100x",
+                status: "active",
+                createdAt: new Date("2024-02-07T23:35:52.087Z"),
+                updatedAt: new Date("2024-02-07T23:38:03.259Z"),
+            },
+            {
+                id: "e643dbea-0ab2-4d3d-8bb8-63aedf027a66",
+                profilePic: "https://avatar.iran.liara.run/public",
+                wallet: "831qmkeGhfL8YpcXuhrug6nHj1YdK3aXMDQUCo85Auh1",
+                xHandle: "@973Meech",
+                userName: "973Meech",
+                status: "active",
+                createdAt: new Date("2024-02-07T23:35:52.087Z"),
+                updatedAt: new Date("2024-02-07T23:38:03.259Z"),
+            },
+            {
+                id: "e643dbea-0ab2-4d3d-8bb8-63aedf027a66",
+                profilePic: "https://avatar.iran.liara.run/public",
+                wallet: "CRVidEDtEUTYZisCxBZkpELzhQc9eauMLR3FWg74tReL",
+                xHandle: "@frankdegods",
+                userName: "frankdegods",
+                status: "active",
+                createdAt: new Date("2024-02-07T23:35:52.087Z"),
+                updatedAt: new Date("2024-02-07T23:38:03.259Z"),
+            },
+        ]
+
+        // Fetch followers and PNL for all traders
+        const tradersWithData = await Promise.all(
+            tradersData.map(async (trader) => {
+                const username = trader.xHandle.replace('@', '') // Remove @ from handle
+                const [followers, pnl] = await Promise.all([
+                    getTwitterFollowers(username),
+                    getCieloPnl(trader.wallet)
+                ])
+                console.log(username, followers, pnl)
+                return {
+                    ...trader,
+                    followers,
+                    pnl // This will override the hardcoded PNL with real-time data
+                }
+            })
+        )
+
         return NextResponse.json({
-            traders: [
-                {
-                  id: "9953ed85-31a0-4db9-acc8-e25b76176443",
-                  profilePic: "https://avatar.iran.liara.run/public",
-                  wallet: "0x1234567890123456789012345678901234567890",
-                  xHandle: "@johnmiller",
-                  followers: 1000,
-                  pnl: -1000,
-                  rtn: "US2347908701",
-                  userName: "John Miller",
-                  phone: "+1-555-0101",
-                  email: "john.miller@example.com",
-                  role: "client",
-                  status: "inactive",
-                  location: "4306 Highland Drive, Seattle, WA 98109",
-                  image: "john.miller.jpg",
-                  otherInformation: "John Miller works in a tech startup in Seattle.",
-                  createdAt: new Date("2024-02-07T23:35:52.087Z"),
-                  updatedAt: new Date("2024-02-07T23:38:03.259Z"),
-                },
-                {
-                  id: "328c2bef-d84b-44a2-b5ae-03bd6550c4c4",
-                  profilePic: "https://avatar.iran.liara.run/public",
-                  wallet: "0x1234567890123456789012345678901234567890",
-                  xHandle: "@elizabetsmith",
-                  followers: 1000,
-                  pnl: 1000,
-                  rtn: "UK6574829302",
-                  userName: "Elizabeth Smith",
-                  phone: "+44-020-8102",
-                  email: "elizabeth.smith@example.co.uk",
-                  role: "client",
-                  status: "active",
-                  location: "22 Camden Road, London, NW1 9DP",
-                  image: "elizabeth.smith.jpg",
-                  otherInformation: "Elizabeth Smith works in a financial consultancy in London.",
-                  createdAt: new Date("2024-02-07T23:35:52.087Z"),
-                  updatedAt: new Date("2024-02-07T23:38:03.259Z"),
-                },
-                {
-                  id: "9543e3a4-99f2-4fcb-ba5d-f2aaebff6716",
-                  profilePic: "https://avatar.iran.liara.run/public",
-                  wallet: "0x1234567890123456789012345678901234567890",
-                  xHandle: "@noahwilson",
-                  followers: 1000,
-                  pnl: 200,
-                  rtn: "AU9085471203",
-                  userName: "Noah Wilson",
-                  phone: "+61-8-9200-1234",
-                  email: "noah.wilson@example.com.au",
-                  role: "provider",
-                  status: "inactive",
-                  location: "305 Murray Street, Perth, WA 6000",
-                  image: "noah.wilson.jpg",
-                  otherInformation: "Noah Wilson is involved in the mining industry in Perth.",
-                  createdAt: new Date("2024-02-07T23:35:52.087Z"),
-                  updatedAt: new Date("2024-02-07T23:38:03.259Z"),
-                },
-                {
-                  id: "bdcba306-57fa-4722-82e3-c4933b09e69b",
-                  profilePic: "https://avatar.iran.liara.run/public",
-                  wallet: "0x1234567890123456789012345678901234567890",
-                  xHandle: "@mariedubois",
-                  followers: 1000,
-                  pnl: 400,
-                  userName: "Marie Dubois",
-                  phone: "+33-1-4533-0012",
-                  email: "marie.dubois@example.fr",
-                  role: "client",
-                  status: "active",
-                  location: "14 Rue de Rivoli, 75004 Paris",
-                  image: "marie.dubois.jpg",
-                  otherInformation: "Marie Dubois works in a fashion house in Paris.",
-                  createdAt: new Date("2024-02-07T23:35:52.087Z"),
-                  updatedAt: new Date("2024-02-07T23:38:03.259Z"),
-                },
-                {
-                  id: "e643dbea-0ab2-4d3d-8bb8-63aedf027a66",
-                  profilePic: "https://avatar.iran.liara.run/public",
-                  wallet: "0x1234567890123456789012345678901234567890",
-                  xHandle: "@wangwei",
-                  followers: 1000,
-                  pnl: -20000,
-                  userName: "Wang Wei",
-                  phone: "+86-20-8221-1234",
-                  email: "wang.wei@example.com.cn",
-                  role: "client",
-                  status: "inactive",
-                  location: "206 Huanshi E Rd, Yuexiu District, Guangzhou, Guangdong",
-                  image: "wang.wei.jpg",
-                  otherInformation: "Wang Wei works for an electronics manufacturing company in Guangzhou.",
-                  createdAt: new Date("2024-02-07T23:35:52.087Z"),
-                  updatedAt: new Date("2024-02-07T23:38:03.259Z"),
-                },
-                {
-                  id: "94093200-c89f-410f-ba96-046f33fabb3e",
-                  profilePic: "https://avatar.iran.liara.run/public",
-                  wallet: "0x1234567890123456789012345678901234567890",
-                  xHandle: "@conormurphy",
-                  followers: 1000,
-                  pnl: 20000,
-                  userName: "Conor Murphy",
-                  phone: "+353-1-242-1000",
-                  email: "conor.murphy@example.ie",
-                  role: "provider",
-                  status: "active",
-                  location: "17 O'Connell Street, Dublin, D01 T9C2",
-                  image: "conor.murphy.jpg",
-                  otherInformation: "Conor Murphy works in a pharmaceutical company in Dublin.",
-                  createdAt: new Date("2024-02-07T23:35:52.087Z"),
-                  updatedAt: new Date("2024-02-07T23:38:03.259Z"),
-                },
-                {
-                  id: "4174f655-5cb2-4bd9-a785-ce11f16cebb0",
-                  profilePic: "https://avatar.iran.liara.run/public",
-                  wallet: "0x1234567890123456789012345678901234567890",
-                  xHandle: "@emmatremblay",
-                  followers: 1000,
-                  pnl: 4000,
-                  userName: "Emma Tremblay",
-                  phone: "+1 604-555-0122",
-                  email: "emma.tremblay@example.com",
-                  role: "client",
-                  status: "inactive",
-                  location: "1020 Mainland Street, Vancouver, BC V6B 2T4",
-                  image: "emma.tremblay.jpg",
-                  otherInformation: "Emma Tremblay is engaged in the environmental sector in Canada.",
-                  createdAt: new Date("2024-02-13T15:35:02.010Z"),
-                  updatedAt: new Date("2024-02-13T15:37:03.020Z"),
-                },
-                {
-                  id: "38d5126b-4473-40d2-8142-2e7049c07346",
-                  profilePic: "https://avatar.iran.liara.run/public",
-                  wallet: "0x1234567890123456789012345678901234567890",
-                  xHandle: "@maximilianbauer",
-                  followers: 1000,
-                  pnl: -10,
-                  userName: "Maximilian Bauer",
-                  phone: "+49 30 567890",
-                  email: "maximilian.bauer@example.com",
-                  role: "client",
-                  status: "active",
-                  location: "Hauptstraße 5, 10178 Berlin",
-                  image: "maximilian.bauer.jpg",
-                  otherInformation: "Maximilian Bauer works for an automobile company in Germany.",
-                  createdAt: new Date("2024-02-14T16:39:04.030Z"),
-                  updatedAt: new Date("2024-02-14T16:40:05.040Z"),
-                },
-                {
-                  id: "cb3ae8be-e376-4d26-9cfc-5884348c22ec",
-                  profilePic: "https://avatar.iran.liara.run/public",
-                  wallet: "0x1234567890123456789012345678901234567890",
-                  xHandle: "@sofiaricci",
-                  followers: 1000,
-                  pnl: 2,
-                  userName: "Sofia Ricci",
-                  phone: "+39 06 12345678",
-                  email: "sofia.ricci@example.com",
-                  role: "provider",
-                  status: "inactive",
-                  location: "Via Roma 15, 00184 Rome",
-                  image: "sofia.ricci.jpg",
-                  otherInformation: "Sofia Ricci is part of the culinary field in Italy.",
-                  createdAt: new Date("2024-02-15T17:41:06.050Z"),
-                  updatedAt: new Date("2024-02-15T17:42:07.060Z"),
-                },
-                {
-                  id: "fa47c0f4-620c-40b3-a16a-b9afa9a88215",
-                  profilePic: "https://avatar.iran.liara.run/public",
-                  wallet: "0x1234567890123456789012345678901234567890",
-                  xHandle: "@arjunpatel",
-                  followers: 1000,
-                  pnl: 90000,
-                  userName: "Arjun Patel",
-                  phone: "+91 22 2771 1234",
-                  email: "arjun.patel@example.com",
-                  role: "client",
-                  status: "active",
-                  location: "142 M.G. Road, Mumbai, Maharashtra 400001",
-                  image: "arjun.patel.jpg",
-                  otherInformation: "Arjun Patel is active in the software industry in India.",
-                  createdAt: new Date("2024-02-16T18:43:08.070Z"),
-                  updatedAt: new Date("2024-02-16T18:44:09.080Z"),
-                },
-                {
-                  id: "8ce5b4d9-5182-4cbf-9d48-f187b377e931",
-                  profilePic: "https://avatar.iran.liara.run/public",
-                  wallet: "0x1234567890123456789012345678901234567890",
-                  xHandle: "@satoyuki",
-                  followers: 1000,
-                  pnl: 300,
-                  userName: "Sato Yuki",
-                  phone: "+81 3 3541 1234",
-                  email: "sato.yuki@example.com",
-                  role: "client",
-                  status: "inactive",
-                  location: "2-11-3 Meguro, Tokyo 153-0063",
-                  image: "sato.yuki.jpg",
-                  otherInformation: "Sato Yuki is engaged in the electronics sector in Japan.",
-                  createdAt: new Date("2024-02-17T19:45:10.090Z"),
-                  updatedAt: new Date("2024-02-17T19:46:11.100Z"),
-                },
-                {
-                  id: "cb2c15c3-7fc9-4d51-8b7b-3e636ac6195b",
-                  profilePic: "https://avatar.iran.liara.run/public",
-                  wallet: "0x1234567890123456789012345678901234567890",
-                  xHandle: "@lucassilva",
-                  followers: 1000,
-                  pnl: -1000,    
-                  userName: "Lucas Silva",
-                  phone: "+55 11 9988-7766",
-                  email: "lucas.silva@example.com",
-                  role: "provider",
-                  status: "active",
-                  location: "Rua Oscar Freire, 379, São Paulo, SP 01426-001",
-                  image: "lucas.silva.jpg",
-                  otherInformation: "Lucas Silva works in the agricultural business in Brazil.",
-                  createdAt: new Date("2024-02-18T20:47:12.110Z"),
-                  updatedAt: new Date("2024-02-18T20:48:13.120Z"),
-                },
-              ]
+            traders: tradersWithData
         }, { status: 200 });
     } catch (error: unknown) {
         console.error('Error fetching PNL:', error);
