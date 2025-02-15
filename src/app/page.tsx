@@ -10,7 +10,7 @@ export default async function Home() {
   // console.log(wallets);
   // In Our example we use local data
   return (
-    <div className="container min-h-screen">
+    <div className="container py-10">
       {wallets.length > 0 &&
         <Suspense fallback={<div>Loading...</div>}>
           <DataTable data={wallets} columns={columns} />

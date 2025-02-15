@@ -9,6 +9,8 @@ import {
   // Pencil, 
   // Trash2,
   // ArrowUpRight
+  SearchIcon,
+  XIcon,
   Copy
 } from "lucide-react";
 
@@ -42,7 +44,7 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
         <DropdownMenuItem>
           <Button variant={"ghost"} size={"sm"} className={"justify-start w-full"} asChild>
             <Link href={`https://solscan.io/address/${user.wallet}`} target="_blank">
-              <Eye className="w-4 h-4 text-blue-500" />
+              <SearchIcon className="w-4 h-4 text-blue-500" />
               {<span className="ml-2">{"View Wallet on Solscan"}</span>}
             </Link>
           </Button>
@@ -50,7 +52,7 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
         <DropdownMenuItem>
           <Button variant={"ghost"} size={"sm"} className={"justify-start w-full"} asChild>
             <Link href={`https://x.com/${user.xHandle}`} target="_blank">
-              <Eye className="w-4 h-4 text-blue-500" />
+              <XIcon className="w-4 h-4 text-blue-500" />
               {<span className="ml-2">{"View Twitter"}</span>}
             </Link>
           </Button>

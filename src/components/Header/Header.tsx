@@ -10,6 +10,7 @@ import { ModeToggle } from "@/components/ui/toggle-theme"
 import dynamic from "next/dynamic"
 import { useWallet } from "@solana/wallet-adapter-react"
 import { FaXTwitter, FaDiscord } from "react-icons/fa6"
+import { motion } from "framer-motion"
 // Dynamically import WalletMultiButton with no SSR
 const WalletMultiButton = dynamic(
   () => import('@solana/wallet-adapter-react-ui').then(mod => mod.WalletMultiButton),
@@ -41,92 +42,106 @@ export function Header() {
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-center py-4 px-4 gap-4 sm:gap-0">
-      <div className="flex items-center gap-2">
+    <motion.div 
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col lg:flex-row items-center py-6 px-6 gap-4 lg:gap-0 backdrop-blur-sm bg-background/80 sticky top-0 z-50 border-b"
+    >
+      <motion.div 
+        className="flex items-center gap-3"
+        whileHover={{ scale: 1.02 }}
+        transition={{ type: "spring", stiffness: 300 }}
+      >
         <Image
           src="/logo.webp"
           alt="Potion Leaderboard"
           width={40}
           height={40}
           priority
-          className="object-contain"
+          className="object-contain hover:rotate-12 transition-transform duration-300"
         />
         <h1 className="text-xl sm:text-2xl font-bold flex flex-col">
-          <span>Potion</span>
-          <span className="text-[#d500fe]">
+          <motion.span
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            Potion
+          </motion.span>
+          <motion.span 
+            className="text-[#d500fe] bg-clip-text text-transparent bg-gradient-to-r from-[#d500fe] to-purple-500"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+          >
             Leaderboard
-          </span>
+          </motion.span>
         </h1>
-      </div>
+      </motion.div>
 
-      <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
-        <div className="w-full sm:flex-1 flex justify-center">
+      <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-8 px-4">
+        <div className="w-full lg:flex-1 flex justify-center">
           <Tabs
             value={getCurrentTab()}
             onValueChange={handleTabChange}
-            className="w-full sm:w-fit max-w-[400px]"
+            className="w-full lg:w-fit max-w-[400px]"
           >
             <TabsList
-              className="grid w-full grid-cols-4 justify-center items-center"
+              className="grid w-full grid-cols-4 justify-center items-center bg-background/50 backdrop-blur-sm"
               aria-label="Navigation Tabs"
             >
-              <TabsTrigger
-                value="leaderboard"
-                className="text-sm sm:text-base"
-                aria-label="View Leaderboard"
-              >
-                Leaderboard
-              </TabsTrigger>
-              <TabsTrigger
-                value="learn"
-                className="text-sm sm:text-base"
-                aria-label="View Learn Section"
-              >
-                Learn
-              </TabsTrigger>
-              <TabsTrigger
-                value="prizes"
-                className="text-sm sm:text-base"
-                aria-label="View Prizes Section"
-              >
-                Prizes
-              </TabsTrigger>
-              <TabsTrigger
-                value="profile"
-                className="text-sm sm:text-base"
-                aria-label="View Profile Section"
-                disabled={!wallet.connected}
-              >
-                Profile
-              </TabsTrigger>
+              {['leaderboard', 'learn', 'prizes', 'profile'].map((tab) => (
+                <motion.div
+                  key={tab}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full"
+                >
+                  <TabsTrigger
+                    value={tab}
+                    className="w-full text-xs sm:text-sm md:text-base transition-all duration-300"
+                    aria-label={`View ${tab} Section`}
+                    disabled={tab === 'profile' && !wallet.connected}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </TabsTrigger>
+                </motion.div>
+              ))}
             </TabsList>
           </Tabs>
         </div>
-        <div className="flex gap-4 sm:gap-8 items-center">
-          <a
-            href="https://twitter.com/potionalpha"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-foreground hover:text-[#d500fe] transition-colors"
-            aria-label="Follow us on Twitter"
-          >
-            <FaXTwitter size={20} />
-          </a>
-          <a
-            href="https://whop.com/potion-alpha/?a=jonny2298"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-foreground hover:text-[#d500fe] transition-colors"
-            aria-label="Join our Discord"
-          >
-            <FaDiscord size={20} />
-          </a>
+        <motion.div 
+          className="flex gap-4 lg:gap-8 items-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
+          {[
+            { icon: <FaXTwitter size={20} />, href: "https://twitter.com/potionalpha", label: "Twitter" },
+            { icon: <FaDiscord size={20} />, href: "https://whop.com/potion-alpha/?a=jonny2298", label: "Discord" }
+          ].map((social) => (
+            <motion.a
+              key={social.label}
+              href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground hover:text-[#d500fe] transition-colors"
+              aria-label={`Follow us on ${social.label}`}
+              whileHover={{ scale: 1.2, rotate: 5 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              {social.icon}
+            </motion.a>
+          ))}
           <ModeToggle />
-          <div className="max-w-[200px]">
+          <motion.div 
+            className="max-w-[200px]"
+            whileHover={{ scale: 1.02 }}
+          >
             <WalletMultiButton />
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 } 

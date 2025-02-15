@@ -41,7 +41,7 @@ export default function RootLayout({
         >
           <WalletContextProvider>
             <Toaster />
-            <div className="container min-h-screen">
+            <div className="px-10">
               <Header />
               {children}
             </div>
