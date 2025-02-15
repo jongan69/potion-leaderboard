@@ -6,13 +6,25 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 
 interface Trade {
-  wallet?: string
-  amount?: number
-  timestamp?: number
-  label?: string
-  token?: string
-  description?: string
-  signature?: string
+  wallet: string
+  amount: number
+  timestamp: number
+  label: string
+  token: string | null
+  description: string
+  signature: string
+  action: string | null
+  fromAmount: number
+  fromToken: string | null
+  tokenData: {
+    priceUsd: string
+    volume24h: number
+    marketCap: number
+    liquidity: number
+    priceChange24h: number
+    holderCount?: number
+    totalSupply?: string
+  } | null
 }
 
 export function LiveTrades() {
@@ -121,14 +133,27 @@ export function LiveTrades() {
                     <span className="font-mono text-xs text-muted-foreground">
                       {trade.wallet?.slice(0, 6)}...{trade.wallet?.slice(-4)}
                     </span>
-                    <span className="font-mono text-xs text-muted-foreground truncate max-w-[300px]">
-                      {trade.description}
-                    </span>
+                    {trade.action ? (
+                      <span className="font-mono text-xs text-muted-foreground truncate max-w-[300px]">
+                        {trade.fromAmount} {trade.fromToken || 'SOL'} → {trade.amount} {trade.token}
+                      </span>
+                    ) : (
+                      <span className="font-mono text-xs text-muted-foreground truncate max-w-[300px]">
+                        {trade.description}
+                      </span>
+                    )}
                   </div>
                   <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                    <span className="font-medium text-sm whitespace-nowrap">{trade.amount} {trade.token}</span>
+                    <span className="font-medium text-sm whitespace-nowrap">
+                      {trade.amount} {trade.token}
+                    </span>
+                    {trade.tokenData && (
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        ${Number(trade.tokenData.priceUsd).toFixed(4)}
+                      </span>
+                    )}
                     <span className="text-xs text-muted-foreground whitespace-nowrap">
-                      {new Date(trade.timestamp || 0).toLocaleTimeString()}
+                      {new Date(trade.timestamp).toLocaleTimeString()}
                     </span>
                   </div>
                 </div>
