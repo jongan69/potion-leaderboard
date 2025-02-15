@@ -14,19 +14,21 @@ export async function POST(request: Request) {
   const matchingTrader = tradersData.find(trader => 
     trader.wallet.toLowerCase() === transaction.feePayer.toLowerCase()
   )
+
+  // Get amount from nativeTransfers
+  const amount = transaction.nativeTransfers[0]?.amount || 0
   
   // Process the webhook data from Helius
   const trade = {
     wallet: transaction.feePayer,
-    amount: transaction.tokenTransfers[0].amount,
+    amount: amount / 1e9, // Convert lamports to SOL
     timestamp: transaction.timestamp * 1000,
     label: matchingTrader?.userName || 'Unknown'
   }
 
-  // Save to MongoDB
+  // Save to Redis and broadcast to clients
   await saveTrade(trade)
-
-  // Broadcast to live clients
+  
   const encoder = new TextEncoder()
   connectedClients.forEach(client => {
     client.write(encoder.encode(`data: ${JSON.stringify(trade)}\n\n`))
