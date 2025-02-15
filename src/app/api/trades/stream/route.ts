@@ -14,9 +14,9 @@ export async function GET() {
   writer.write(encoder.encode(`data: ${JSON.stringify({ message: 'Connected to trade stream' })}\n\n`))
 
   // Clean up when the connection closes
-  const closeHandler = () => {
+  stream.readable.pipeTo(new WritableStream()).catch(() => {
     connectedClients.delete(writer)
-  }
+  })
 
   return new Response(stream.readable, {
     headers: {
