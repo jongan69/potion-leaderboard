@@ -1,15 +1,12 @@
 import { connectedClients } from '@/lib/store'
 
-export const runtime = 'edge'
-export const dynamic = 'force-dynamic'
-
 export async function GET() {
   console.log('SSE: New client connection request')
   const stream = new TransformStream()
   const writer = stream.writable.getWriter()
   const encoder = new TextEncoder()
 
-  // Add heartbeat interval
+  // Add heartbeat interval with shorter interval (15 seconds)
   const heartbeat = setInterval(async () => {
     try {
       console.log('SSE: Sending heartbeat')
@@ -18,32 +15,36 @@ export async function GET() {
       console.error('SSE: Error sending heartbeat:', error)
       clearInterval(heartbeat)
       connectedClients.delete(writer)
+      try {
+        await writer.close()
+      } catch (e) {
+        console.error('SSE: Error closing writer:', e)
+      }
     }
-  }, 30000)
+  }, 15000) // Reduced from 30000 to 15000
 
   try {
-    // Add this client to the shared store
-    connectedClients.add(writer)
-    console.log('SSE: Client added to connected clients. Total clients:', connectedClients.size)
-
-    // Send initial message
-    const initialMessage = JSON.stringify({ type: 'connection', message: 'Connected to trade stream' })
-    await writer.write(encoder.encode(`data: ${initialMessage}\n\n`))
-    console.log('SSE: Sent initial connection message')
-
-    // Create the response immediately
+    // Create the response immediately with updated headers
     const response = new Response(stream.readable, {
       headers: {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache, no-transform',
         'Connection': 'keep-alive',
         'X-Accel-Buffering': 'no',
-        // Add CORS headers if needed
+        'Keep-Alive': 'timeout=60, max=1000',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': 'true',
       },
     })
 
+    // Add this client to the shared store and send initial message
+    connectedClients.add(writer)
+    console.log('SSE: Client added to connected clients. Total clients:', connectedClients.size)
+
+    const initialMessage = JSON.stringify({ type: 'connection', message: 'Connected to trade stream' })
+    await writer.write(encoder.encode(`data: ${initialMessage}\n\n`))
+
+    // The client will automatically handle disconnection and cleanup through the heartbeat mechanism
     return response
   } catch (err) {
     console.error('SSE: Stream error:', err)
