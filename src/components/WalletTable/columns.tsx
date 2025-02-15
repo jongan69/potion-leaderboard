@@ -3,8 +3,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 import clsx from "clsx";
 
-import { DataTableColumnHeader } from "@/app/wallets/data-table-column-header";
-import { DataTableRowActions } from "@/app/wallets/data-table-row-actions";
+import { DataTableColumnHeader } from "@/components/WalletTable/data-table-column-header";
+import { DataTableRowActions } from "@/components/WalletTable/data-table-row-actions";
 import { Wallet } from "@/lib/types";
 import { usersStatus } from "./definitions";
 import Image from "next/image";

@@ -4,7 +4,8 @@
 import Link from "next/link";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Row } from "@tanstack/react-table";
-import { Eye, 
+import {
+  Eye,
   // Pencil, 
   // Trash2,
   // ArrowUpRight
@@ -40,7 +41,23 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
           <Button variant={"ghost"} size={"sm"} className={"justify-start w-full"} asChild>
             <Link href={`https://solscan.io/address/${user.wallet}`} target="_blank">
               <Eye className="w-4 h-4 text-blue-500" />
-              {<span className="ml-2">{"View"}</span>}
+              {<span className="ml-2">{"View Wallet on Solscan"}</span>}
+            </Link>
+          </Button>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Button variant={"ghost"} size={"sm"} className={"justify-start w-full"} asChild>
+            <Link href={`https://x.com/${user.xHandle}`} target="_blank">
+              <Eye className="w-4 h-4 text-blue-500" />
+              {<span className="ml-2">{"View Twitter"}</span>}
+            </Link>
+          </Button>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Button variant={"ghost"} size={"sm"} className={"justify-start w-full"} asChild>
+            <Link href={`https://app.cielo.finance/profile/${user.wallet}`} target="_blank">
+              <Eye className="w-4 h-4 text-blue-500" />
+              {<span className="ml-2">{"View Ceilo Profile"}</span>}
             </Link>
           </Button>
         </DropdownMenuItem>
