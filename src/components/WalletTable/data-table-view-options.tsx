@@ -23,10 +23,13 @@ export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="ml-auto hidden h-8 lg:flex">
           <MixerHorizontalIcon className="mr-2 h-4 w-4" />
-          {"See Columns"}
+          {/* {"See Columns"} */}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px] bg-[#25223D]">
+      <DropdownMenuContent 
+        align="end" 
+        className="w-[160px] bg-white dark:bg-[#25223D]"
+      >
         <DropdownMenuLabel>{"Edit Columns"}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table

@@ -12,7 +12,7 @@ import Image from "next/image";
 export const columns: ColumnDef<Wallet>[] = [
   {
     accessorKey: "rank",
-    header: () => <h1>Rank</h1>,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={"Rank"} />,
     cell: ({ row, table }) => {
       // Get all rows sorted by PNL
       const sortedRows = [...table.getPreFilteredRowModel().rows].sort(
