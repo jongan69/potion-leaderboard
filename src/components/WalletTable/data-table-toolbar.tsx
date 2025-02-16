@@ -32,9 +32,10 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
-    <div className="flex w-full items-center justify-between">
-      <div className="flex flex-1 items-center space-x-2">
-        <div className="flex items-center space-x-2 mr-4">
+    <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      {/* First row - filters */}
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center space-x-2">
           <Switch id="view-mode" onCheckedChange={handleSwitchChange} />
         </div>
 
@@ -65,29 +66,41 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
         )}
       </div>
 
-      <div className="flex items-center space-x-4 mb-4 justify-center flex-1">
+      {/* Second row - time period buttons */}
+      <div className="flex flex-wrap items-center gap-2 sm:flex-1 sm:justify-center">
         <Button 
-        onClick={() => unfinishedFeatureToast("Daily")}
-        className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">Daily</Button>
+          onClick={() => unfinishedFeatureToast("Daily")}
+          className="h-8 px-4 rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">
+          Daily
+        </Button>
         <Button 
-        onClick={() => unfinishedFeatureToast("Weekly")}
-        className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">Weekly</Button>
+          onClick={() => unfinishedFeatureToast("Weekly")}
+          className="h-8 px-4 rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">
+          Weekly
+        </Button>
         <Button 
-        onClick={() => unfinishedFeatureToast("Monthly")}
-        className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">Monthly</Button>
-        <Button className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">All Time</Button>
+          onClick={() => unfinishedFeatureToast("Monthly")}
+          className="h-8 px-4 rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">
+          Monthly
+        </Button>
+        <Button className="h-8 px-4 rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">
+          All Time
+        </Button>
       </div>
-      
-      <Input
-        placeholder={"Search by wallet or handle"}
-        value={(table.getColumn("globalSearch")?.getFilterValue() as string) ?? ""}
-        onChange={(event) => {
-          const value = event.target.value;
-          table.getColumn("globalSearch")?.setFilterValue(value);
-        }}
-        className="h-8 w-[150px] lg:w-[250px] m-2"
-      />
-      <DataTableViewOptions table={table} />
+
+      {/* Third row - search and view options */}
+      <div className="flex items-center gap-2">
+        <Input
+          placeholder={"Search by wallet or handle"}
+          value={(table.getColumn("globalSearch")?.getFilterValue() as string) ?? ""}
+          onChange={(event) => {
+            const value = event.target.value;
+            table.getColumn("globalSearch")?.setFilterValue(value);
+          }}
+          className="h-8 w-[150px] lg:w-[250px]"
+        />
+        <DataTableViewOptions table={table} />
+      </div>
     </div>
   );
 }
