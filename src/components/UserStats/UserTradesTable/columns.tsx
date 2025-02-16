@@ -89,8 +89,8 @@ export const createColumns = (userName: string): ColumnDef<Trade>[] => [
             totalInvested: row.original.fromAmount,
             totalSold: row.original.toAmount,
             roi: row.original.roi,
-            tokenSymbol: row.original.toTokenData?.symbol ?? "Unknown",
-            tokenImage: row.original.toTokenData?.image ?? "",
+            tokenSymbol: row.original.toTokenSymbol ?? "Unknown",
+            tokenImage: row.original.toTokenPic ?? "",
             userName: userName
           }}
         />
