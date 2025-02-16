@@ -4,9 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { formatDistanceToNow } from "date-fns"
 import { Twitter } from "lucide-react"
 import UserTradesDataTable from "@/components/UserStats/UserTradesTable/data-table"
-import { Button } from "@/components/ui/button"
-import { handleTwitterAuth } from "@/lib/handleTwitterAuth"
-import { PublicKey } from "@solana/web3.js"
 import UserSignup from "@/components/UserSignup/UserSignup"
 
 type Props = {
