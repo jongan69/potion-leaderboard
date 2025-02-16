@@ -5,16 +5,18 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { unfinishedFeatureToast } from "@/lib/unfinishedFeatureToast";
+// import { useState } from "react";
 
 
 type UserStatsProps = {
     stats: {
         tokenCount: number
         winRate: number
-        trades: {
-            buys: number
-            sells: number
-        }
+        trades: Array<{
+            id: number
+            action: "buy" | "sell"
+            // ... other trade properties ...
+        }>
         averageBuy: number
         averageEntry: number
         averageHoldTime: string
@@ -25,10 +27,16 @@ type UserStatsProps = {
 }
 
 export function UserStatsTable({ stats }: UserStatsProps) {
+    // const [selectedTimeframe, setSelectedTimeframe] = useState("Daily");
+    
+    // Count buys and sells from the trades array
+    const buys = stats.trades.filter(trade => trade.action === "buy").length;
+    const sells = stats.trades.filter(trade => trade.action === "sell").length;
+
     const statItems = [
         { label: "Token Count", value: stats.tokenCount },
         { label: "Win Rate", value: `${(stats.winRate * 100).toFixed(2)}%` },
-        { label: "Trades", value: `${stats.trades.buys} / ${stats.trades.sells}` },
+        { label: "Trades", value: `${buys} / ${sells}` },
         { label: "Average Buy", value: `$${stats.averageBuy.toFixed(2)}` },
         { label: "Average Entry", value: `$${stats.averageEntry.toFixed(2)}` },
         { label: "Average Hold Time", value: stats.averageHoldTime },

@@ -6,10 +6,27 @@ export interface Trade {
   signature: string
   timestamp: number
   action: string | null
-  fromToken: string | null
+  // from token
+  fromTokenAddress: string
+  fromTokenSymbol: string
+  fromTokenPic: string
   fromAmount: number
-  toToken: string | null
+
+  // to token
+  toTokenAddress: string
+  toTokenSymbol: string
+  toTokenPic: string
   toAmount: number
+
+  entryPrice: number
+  exitPrice: number
+  pnl: number
+  roi: number
+  lastTrade: string
+  amountInvested: number
+  holding: number
+  avgSell: number
+  holdingTime: number
   fromTokenData: {
     image: string
     symbol: string
@@ -34,20 +51,4 @@ export interface Trade {
     holderCount?: number
     totalSupply?: string
   } | null
-  tokenInPic: string
-  tokenInSymbol: string
-  amountIn: number
-  tokenOutPic: string
-  tokenOutSymbol: string
-  tokenOutAddress: string
-  amountOut: number
-  entryPrice: number
-  exitPrice: number
-  pnl: number
-  roi: number
-  lastTrade: string
-  amountInvested: number
-  holding: number
-  avgSell: number
-  holdingTime: number
 } 

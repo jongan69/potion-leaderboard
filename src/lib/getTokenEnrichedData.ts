@@ -10,6 +10,7 @@ export interface EnrichedTokenData {
     holderCount?: number;
     totalSupply?: string;
     isNft?: boolean;
+    image?: string;
 }
 
 export async function getTokenEnrichedData(contractAddress: string): Promise<EnrichedTokenData> {
@@ -31,6 +32,7 @@ export async function getTokenEnrichedData(contractAddress: string): Promise<Enr
             priceChange24h: mainPair.priceChange.h24 || 0,
             holderCount: dexScreenerData.holders?.count,
             totalSupply: dexScreenerData.holders?.totalSupply,
+            image: dexScreenerData.ti?.image,
         };
     } catch (error: unknown) {
         if (error instanceof Error) {

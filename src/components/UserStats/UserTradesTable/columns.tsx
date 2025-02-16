@@ -13,20 +13,25 @@ export const createColumns = (userName: string): ColumnDef<Trade>[] => [
     accessorKey: "token",
     header: () => <h1>Token</h1>,
     cell: ({ row }) => {
-      // const wallet = row.original.wallet;
-      // const tokenInPic = row.original.fromTokenData?.image;
-      const tokenOutPic = row.original.toTokenData?.image;
-      const tokenOutSymbol = row.original.toTokenData?.symbol;
-      const tokenOutAddress = row.original.toTokenData?.address;
+      const fromTokenPic = row.original.fromTokenPic ?? `https://avatar.iran.liara.run/username?username=${row.original.fromTokenSymbol}`;
+      const fromTokenSymbol = row.original.fromTokenSymbol;
+
+      const toTokenPic = row.original.toTokenPic ?? `https://avatar.iran.liara.run/username?username=${row.original.toTokenSymbol}`;
+      const toTokenSymbol = row.original.toTokenSymbol;
+      const toTokenAddress = row.original.toTokenAddress;
       return (
         <div className="flex items-center gap-2">
           <Avatar>
-            <AvatarImage src={`https://avatar.iran.liara.run/username?username=${tokenOutPic}`} alt="Profile Pic" width={32} height={32}/>
-            <AvatarFallback>{tokenOutPic?.slice(0, 2)}</AvatarFallback>
+            <AvatarImage src={fromTokenPic} alt="Profile Pic" width={32} height={32}/>
+            <AvatarFallback>{fromTokenSymbol?.slice(0, 2)}</AvatarFallback>
+          </Avatar>
+          <Avatar>
+            <AvatarImage src={toTokenPic} alt="Profile Pic" width={32} height={32}/>
+            <AvatarFallback>{toTokenSymbol?.slice(0, 2)}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start truncate">
-            <h1 className="font-medium">{tokenOutSymbol}</h1>
-            <h1 className="text-sm text-gray-500 truncate">{tokenOutAddress?.slice(0, 6)}...{tokenOutAddress?.slice(-6)}</h1>
+            <h1 className="font-medium">{toTokenSymbol}</h1>
+            <h1 className="text-sm text-gray-500 truncate">{toTokenAddress?.slice(0, 6)}...{toTokenAddress?.slice(-6)}</h1>
           </div>
         </div>
       );

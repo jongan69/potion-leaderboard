@@ -1,5 +1,5 @@
 "use client"
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { Share1Icon } from "@radix-ui/react-icons"
 
 import { Button } from "@/components/ui/button"
@@ -25,11 +25,22 @@ interface PnlDialogProps {
 
 const loadFont = async () => {
     try {
-        // Load Inter font from Google Fonts
-        await document.fonts.load('bold 48px "Inter"')
-        await document.fonts.load('400 32px "Inter"')
+        const timeout = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Font loading timed out')), 3000)
+        })
+        
+        await Promise.race([
+            document.fonts.load('bold 48px "Inter"'),
+            timeout
+        ])
+        
+        await Promise.race([
+            document.fonts.load('400 32px "Inter"'),
+            timeout
+        ])
     } catch (error) {
         console.error('Failed to load fonts:', error)
+        // Fallback to system fonts
     }
 }
 
@@ -76,7 +87,7 @@ const createPnlImage = async (
             tokenImg.onload = () => {
                 const size = Math.min(canvas.width, canvas.height) * 0.15
                 const x = canvas.width / 2 - size / 2
-                const y = canvas.height * 0.1
+                const y = canvas.height * 0.25
 
                 ctx.save()
                 ctx.beginPath()
@@ -111,13 +122,13 @@ const createPnlImage = async (
     ctx.fillText(
         `${props.userName}'s ${props.tokenSymbol} Stats`, 
         centerX, 
-        canvas.height * 0.35 // 35% from top
+        canvas.height * 0.5 // 35% from top
     )
 
     // Stats
     ctx.font = `400 ${statsFontSize}px "Inter"`
     const lineHeight = fontSize * 1.2
-    let currentY = canvas.height * 0.5 // Start stats at 50% from top
+    let currentY = canvas.height * 0.6 // Start stats at 50% from top
 
     // Draw stats with relative positioning
     ctx.fillText(
@@ -157,12 +168,18 @@ export function PnlDialog(props: PnlDialogProps) {
     const [imageUrl, setImageUrl] = useState<string>("")
     const [isLoading, setIsLoading] = useState(false)
     const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 })
+    const [bgDimensions, setBgDimensions] = useState<{ width: number; height: number } | null>(null)
+    const [error, setError] = useState<string | null>(null)
 
     const getBackgroundImageDimensions = async () => {
+        if (bgDimensions) return bgDimensions
+        
         return new Promise<{ width: number; height: number }>((resolve) => {
             const img = new window.Image()
             img.onload = () => {
-                resolve({ width: img.width, height: img.height })
+                const dimensions = { width: img.width, height: img.height }
+                setBgDimensions(dimensions)
+                resolve(dimensions)
             }
             img.onerror = () => {
                 throw new Error("Failed to load background image")
@@ -189,8 +206,14 @@ export function PnlDialog(props: PnlDialogProps) {
 
             setImageUrl(url)
             console.log("Image generated successfully")
-        } catch (error) {
-            console.error("Error generating image:", error instanceof Error ? error.message : error)
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error("Error generating image:", error.message)
+                setError(error.message)
+            } else {
+                console.error("Error generating image:", String(error))
+                setError(String(error))
+            }
         } finally {
             setIsLoading(false)
         }
@@ -214,10 +237,21 @@ export function PnlDialog(props: PnlDialogProps) {
         }
     }
 
+    useEffect(() => {
+        return () => {
+            if (imageUrl) {
+                URL.revokeObjectURL(imageUrl)
+            }
+        }
+    }, [imageUrl])
+
     return (
         <Dialog onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-                <Button variant="outline">
+                <Button 
+                    variant="outline"
+                    aria-label={`Share ${props.tokenSymbol} stats`}
+                >
                     <Share1Icon className="w-4 h-4" />
                 </Button>
             </DialogTrigger>
@@ -237,12 +271,18 @@ export function PnlDialog(props: PnlDialogProps) {
                     >
                         {isLoading ? (
                             <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+                                <div 
+                                    className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"
+                                    role="status"
+                                    aria-label="Loading stats image"
+                                />
                             </div>
                         ) : (
                             imageUrl && (
                                 <Image
                                     src={imageUrl}
+                                    width={imageDimensions.width}
+                                    height={imageDimensions.height}
                                     alt="PNL Stats"
                                     className="w-full h-full object-contain"
                                 />
@@ -260,6 +300,11 @@ export function PnlDialog(props: PnlDialogProps) {
                             Download Image
                         </Button>
                     </div>
+                    {error && (
+                        <div className="text-red-500 text-center p-4">
+                            Failed to generate image: {error}
+                        </div>
+                    )}
                 </div>
                 <DialogFooter className="sm:justify-start">
                     <DialogClose asChild>

@@ -35,7 +35,7 @@ export function TradeCard({ trade }: TradeCardProps) {
             </span>
             {trade.action ? (
               <span className="font-mono text-xs text-muted-foreground truncate">
-                {trade.fromAmount} {trade.fromToken} → {trade.toAmount} {trade.toToken}
+                {trade.fromAmount} {trade.fromTokenSymbol} → {trade.toAmount} {trade.toTokenSymbol}
               </span>
             ) : (
               <span className="font-mono text-xs text-muted-foreground truncate">
@@ -45,7 +45,7 @@ export function TradeCard({ trade }: TradeCardProps) {
           </div>
           <div className="flex flex-col items-end gap-1 flex-shrink-0">
             <span className="font-medium text-sm whitespace-nowrap">
-              {trade.toAmount} {trade.toToken}
+              {trade.toAmount} {trade.toTokenSymbol}
             </span>
             {trade.toTokenData && (
               <span className="text-xs text-muted-foreground whitespace-nowrap">

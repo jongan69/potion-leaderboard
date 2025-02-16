@@ -353,16 +353,6 @@ interface DexScreenerResponse {
     };
 }
 
-export async function getDexScreenerData(contractAddress: string): Promise<DexScreenerResponse> {
-    const response = await fetch(
-        `https://api.dexscreener.com/latest/dex/tokens/${contractAddress}`
-    );
-    if (!response.ok) {
-        throw new Error(`DexScreener API error: ${response.status}`);
-    }
-    return response.json();
-}
-
 interface PairDetailsResponse {
     pairs: DexPair[];
     holders: {
@@ -375,6 +365,18 @@ interface PairDetailsResponse {
     cmc?: CoinMarketCapUrls;
     isNft: boolean;
 }
+
+export async function getDexScreenerData(contractAddress: string): Promise<DexScreenerResponse> {
+    const response = await fetch(
+        `https://api.dexscreener.com/latest/dex/tokens/${contractAddress}`
+    );
+    if (!response.ok) {
+        throw new Error(`DexScreener API error: ${response.status}`);
+    }
+    return response.json();
+}
+
+
 
 export async function getPairDetails(pairAddress: string): Promise<PairDetailsResponse> {
     const response = await fetch(
