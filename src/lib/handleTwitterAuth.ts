@@ -42,33 +42,35 @@ export const handleTwitterAuth = async (publicKey: PublicKey) => {
 
       const { url } = await response.json();
 
-      // Open Twitter auth in a popup
-      const width = 600;
-      const height = 600;
-      const left = window.screen.width / 2 - width / 2;
-      const top = window.screen.height / 2 - height / 2;
-
-      const popup = window.open(
-        url,
-        'Twitter Auth',
-        `width=${width},height=${height},left=${left},top=${top}`
-      );
-
-      // Check if popup was blocked
-      if (!popup) {
-        console.error('Popup was blocked');
+      // Open Twitter auth in a new tab
+      const newTab = window.open(url, '_blank');
+      if (!newTab) {
+        console.error('New tab was blocked');
         return;
       }
 
       // Start checking if popup closed
       const checkPopupClosed = setInterval(async () => {
-        if (popup.closed) {
+        if (newTab.closed) {
           clearInterval(checkPopupClosed);
           // Always check Twitter status when popup closes
           const twitterStatus = await checkTwitterStatus(publicKey.toString());
           return twitterStatus;
         }
       }, 1000);
+
+      // Listen for messages from the popup
+      window.addEventListener('message', async (event) => {
+        if (event.origin !== window.location.origin) return; // Ensure the message is from the same origin
+        if (event.data.type === 'TWITTER_AUTH_SUCCESS') {
+          // Close the popup if it is still open
+          if (newTab) {
+            newTab.close();
+          }
+          // Optionally, handle the success data here
+          console.log('Twitter Auth Success:', event.data);
+        }
+      });
 
     } catch (error) {
       console.error('Twitter auth error:', error);

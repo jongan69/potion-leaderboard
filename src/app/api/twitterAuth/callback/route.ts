@@ -20,7 +20,11 @@ const oauth = new OAuth({
 });
 
 export async function GET(req: Request) {
-  const { oauth_token, oauth_verifier, wallet, origin } = await req.json();
+  const url = new URL(req.url);
+  const oauth_token = url.searchParams.get('oauth_token');
+  const oauth_verifier = url.searchParams.get('oauth_verifier');
+  const wallet = url.searchParams.get('wallet');
+  const origin = url.searchParams.get('origin');
 
   if (!oauth_token || !oauth_verifier || !wallet) {
     return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
@@ -67,23 +71,27 @@ export async function GET(req: Request) {
 
     // console.log('origin', origin);
     // Close the popup and notify the parent window
-    return NextResponse.json({
-      status: 200,
-      body: `
+    return new NextResponse(
+      `
         <html>
           <body>
-          <script>
-            window.opener.postMessage({ 
-              type: 'TWITTER_AUTH_SUCCESS', 
-              screenName: '${screenName}',
-              userId: '${userId}'
-            }, '${origin || '*'}');
-            window.close();
-          </script>
-        </body>
-      </html>
-    `
-    });
+            <script>
+              window.opener.postMessage({ 
+                type: 'TWITTER_AUTH_SUCCESS', 
+                screenName: '${screenName}',
+                userId: '${userId}'
+              }, '${origin || '*'}');
+              window.close();
+            </script>
+          </body>
+        </html>
+      `,
+      {
+        headers: {
+          'Content-Type': 'text/html',
+        },
+      }
+    );
   } catch (error) {
     console.error('Twitter callback error:', error);
     return NextResponse.json({ error: 'Failed to complete Twitter authentication' }, { status: 500 });
