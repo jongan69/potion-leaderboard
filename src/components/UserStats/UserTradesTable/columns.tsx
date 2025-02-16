@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/WalletTable/data-table-column-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { DoubleArrowRightIcon } from '@radix-ui/react-icons';
 
 import { Trade } from "@/types/trade";
 import { PnlDialog } from "@/components/PnlDialog/PnlDialog";
@@ -20,11 +21,12 @@ export const createColumns = (userName: string): ColumnDef<Trade>[] => [
       const toTokenSymbol = row.original.toTokenSymbol;
       const toTokenAddress = row.original.toTokenAddress;
       return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 relative">
           <Avatar>
             <AvatarImage src={fromTokenPic} alt="Profile Pic" width={32} height={32}/>
             <AvatarFallback>{fromTokenSymbol?.slice(0, 2)}</AvatarFallback>
           </Avatar>
+          <DoubleArrowRightIcon className="text-gray-500" />
           <Avatar>
             <AvatarImage src={toTokenPic} alt="Profile Pic" width={32} height={32}/>
             <AvatarFallback>{toTokenSymbol?.slice(0, 2)}</AvatarFallback>
