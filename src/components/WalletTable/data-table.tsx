@@ -42,8 +42,6 @@ const globalFilterFn = (row: any, columnId: string, filterValue: string) => {
 export default function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
-    location: false,
-    otherInformation: false,
     wallet: false,
     xHandle: false,
   });
