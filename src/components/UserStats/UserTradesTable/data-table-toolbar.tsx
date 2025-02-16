@@ -33,25 +33,17 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
   return (
     <div className="flex w-full items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
-        <div className="flex items-center space-x-2 mr-4">
-          <Switch id="view-mode" onCheckedChange={handleSwitchChange} />
-        </div>
-
-        {table.getColumn("status") && (
-          <DataTableFacetedFilter
-            column={table.getColumn("status")}
-            title={"Trader Status"}
-            options={usersStatus}
-          />
-        )}
-
-        {table.getColumn("pnl") && (
-          <DataTableFacetedFilter
-            column={table.getColumn("pnl")}
-            title={"PNL Status"}
-            options={pnlStatus}
-          />
-        )}
+      <div className="flex items-center space-x-4">
+        <Button variant="outline" className="rounded-full" onClick={() => {/* Handle Trades display */}}>
+          Trades
+        </Button>
+        <Button variant="outline" className="rounded-full" onClick={() => {/* Handle Tokens display */}}>
+          Tokens
+        </Button>
+        <Button variant="outline" className="rounded-full" onClick={() => {/* Handle Groups display */}}>
+          Groups
+        </Button>
+      </div>
 
         {isFiltered && (
           <Button
@@ -63,16 +55,8 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
           </Button>
         )}
       </div>
-
-      <div className="flex items-center space-x-4 mb-4 justify-center flex-1">
-        <Button className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">Daily</Button>
-        <Button className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">Weekly</Button>
-        <Button className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">Monthly</Button>
-        <Button className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">All Time</Button>
-      </div>
-      
       <Input
-        placeholder={"Search by wallet or handle"}
+        placeholder={"Search by token or contract address"}
         value={(table.getColumn("globalSearch")?.getFilterValue() as string) ?? ""}
         onChange={(event) => {
           const value = event.target.value;

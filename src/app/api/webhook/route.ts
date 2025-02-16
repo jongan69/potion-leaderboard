@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server'
 import { saveTrade } from '@/lib/store'
-import { tradersData } from "../../../../traders"
 import { pusher } from '@/lib/pusher'
 import { getTokenEnrichedData } from '@/lib/fetchTickerFromCa'
+
+// replace with mongodb call
+import { tradersData } from "../../../../traders"
+
 
 interface TokenTransfer {
   fromUserAccount: string

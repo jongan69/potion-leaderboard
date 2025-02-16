@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
-import { tradersData } from "../../../../traders";
-import { mockData } from "../../../../mockData";
+
+// replace with mongodb call
+import { tradersData } from "../../../../../traders";
+import { mockStatsData } from "../../../../../mockData";
 
 // Add cache configuration
 export const revalidate = 300; // Cache for 5 minutes
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
+        // Get the search query from URL parameters
+        const { searchParams } = new URL(request.url);
+        const searchQuery = searchParams.get('wallet')?.toLowerCase();
+
         // Function to fetch twitter followers
         const getTwitterFollowers = async (username: string) => {
             try {
@@ -38,10 +44,23 @@ export async function GET() {
             }
         }
 
-        // Fetch followers and PNL for all traders
-        const tradersWithData = await Promise.all(
-            tradersData.map(async (trader) => {
-                const username = trader.xHandle.replace('@', '') // Remove @ from handle
+        // Filter traders if search query exists
+        const tradersToProcess = searchQuery
+            ? tradersData.filter(trader => trader.wallet.toLowerCase() === searchQuery)
+            : tradersData;
+
+        // If searching and no trader found, return 404
+        if (searchQuery && tradersToProcess.length === 0) {
+            return NextResponse.json(
+                { message: 'Trader not found' },
+                { status: 404 }
+            );
+        }
+
+        // Fetch followers and PNL for filtered traders
+        const userWithData = await Promise.all(
+            tradersToProcess.map(async (trader) => {
+                const username = trader.xHandle.replace('@', '')
                 const [followers, pnl] = await Promise.all([
                     getTwitterFollowers(username),
                     getPnl(trader.wallet)
@@ -51,15 +70,14 @@ export async function GET() {
                     ...trader,
                     followers,
                     pnl,
-                    // Mock data for UI matching
-                    ...mockData
+                    ...mockStatsData
                 }
             })
         )
 
         // Add cache-control header to the response
         const response = NextResponse.json({
-            traders: tradersWithData
+            user: userWithData[0]
         }, {
             status: 200,
             headers: {

@@ -5,9 +5,10 @@ import clsx from "clsx";
 
 import { DataTableColumnHeader } from "@/components/WalletTable/data-table-column-header";
 import { DataTableRowActions } from "@/components/WalletTable/data-table-row-actions";
-import { Wallet } from "@/lib/types";
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+
+import { Wallet } from "@/types/wallet";
 import { usersStatus } from "./definitions";
-import Image from "next/image";
 
 export const columns: ColumnDef<Wallet>[] = [
   {
@@ -38,7 +39,10 @@ export const columns: ColumnDef<Wallet>[] = [
       const wallet = row.original.wallet;
       return (
         <div className="flex items-center gap-2">
-          <Image src={`https://avatar.iran.liara.run/username?username=${userName}`} alt="Profile Pic" width={32} height={32} />
+          <Avatar>
+            <AvatarImage src={`https://avatar.iran.liara.run/username?username=${userName}`} alt="Profile Pic" width={32} height={32}/>
+            <AvatarFallback>{userName.slice(0, 2)}</AvatarFallback>
+          </Avatar>
           <div className="flex flex-col items-start truncate">
             <h1 className="font-medium">{userName}</h1>
             <h1 className="text-sm text-gray-500 truncate">{wallet.slice(0, 6)}...{wallet.slice(-6)}</h1>
