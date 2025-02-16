@@ -47,9 +47,9 @@ export function TradeCard({ trade }: TradeCardProps) {
             <span className="font-medium text-sm whitespace-nowrap">
               {trade.toAmount} {trade.toToken}
             </span>
-            {trade.tokenData && (
+            {trade.toTokenData && (
               <span className="text-xs text-muted-foreground whitespace-nowrap">
-                ${Number(trade.tokenData.priceUsd).toFixed(4)}
+                ${Number(trade.toTokenData.priceUsd).toFixed(4)}
               </span>
             )}
             <span className="text-xs text-muted-foreground whitespace-nowrap">

@@ -5,23 +5,23 @@ import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch"
+// import { Switch } from "@/components/ui/switch"
 
 // import { usersStatus } from "@/app/wallets/definitions";
 
-import { DataTableFacetedFilter } from "./data-table-faceted-filter";
+// import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 import { DataTableViewOptions } from "./data-table-view-options";
-import { usersStatus, pnlStatus } from "./definitions";
-import { toast } from "react-hot-toast";
+// import { usersStatus, pnlStatus } from "./definitions";
+// import { toast } from "react-hot-toast";
 
 
-const handleSwitchChange = (checked: boolean) => {
-  if (checked) {
-    toast("Groups feature will be available soon!", {
-      duration: 3000,
-    });
-  }
-};
+// const handleSwitchChange = (checked: boolean) => {
+//   if (checked) {
+//     toast("Groups feature will be available soon!", {
+//       duration: 3000,
+//     });
+//   }
+// };
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;

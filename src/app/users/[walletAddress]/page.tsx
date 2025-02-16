@@ -3,7 +3,6 @@ import { UserStatsTable } from "@/components/UserStats/UserStatsCards"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { formatDistanceToNow } from "date-fns"
 import { Twitter } from "lucide-react"
-import { mockTradesData } from "../../../../mockData"
 import UserTradesDataTable from "@/components/UserStats/UserTradesTable/data-table"
 import { columns } from "@/components/UserStats/UserTradesTable/columns"
 

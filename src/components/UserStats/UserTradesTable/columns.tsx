@@ -1,22 +1,19 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import clsx from "clsx";
 
 import { DataTableColumnHeader } from "@/components/WalletTable/data-table-column-header";
-import { DataTableRowActions } from "@/components/WalletTable/data-table-row-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
 import { Trade } from "@/types/trade";
-import { usersStatus } from "./definitions";
 
 export const columns: ColumnDef<Trade>[] = [
   {
     accessorKey: "token",
     header: () => <h1>Token</h1>,
     cell: ({ row }) => {
-      const wallet = row.original.wallet;
-      const tokenInPic = row.original.fromTokenData?.image;
+      // const wallet = row.original.wallet;
+      // const tokenInPic = row.original.fromTokenData?.image;
       const tokenOutPic = row.original.toTokenData?.image;
       const tokenOutSymbol = row.original.toTokenData?.symbol;
       const tokenOutAddress = row.original.toTokenData?.address;
