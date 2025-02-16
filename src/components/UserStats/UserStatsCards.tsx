@@ -39,19 +39,39 @@ export function UserStatsTable({ stats }: UserStatsProps) {
 
     return (
         <div>
-            <div className="flex space-x-4 mb-4">
-                <Button className="rounded-full bg-muted-foreground" onClick={() => unfinishedFeatureToast("Daily")}>Daily</Button>
-                <Button className="rounded-full bg-muted-foreground" onClick={() => unfinishedFeatureToast("Weekly")}>Weekly</Button>
-                <Button className="rounded-full bg-muted-foreground" onClick={() => unfinishedFeatureToast("Monthly")}>Monthly</Button>
-                <Button className="rounded-full bg-muted-foreground" onClick={() => unfinishedFeatureToast("All Time")}>All Time</Button>
+            <div className="flex flex-wrap gap-2 mb-4">
+                <Button 
+                    className="rounded-full bg-muted-foreground" 
+                    onClick={() => unfinishedFeatureToast("Daily")}
+                >
+                    Daily
+                </Button>
+                <Button 
+                    className="rounded-full bg-muted-foreground" 
+                    onClick={() => unfinishedFeatureToast("Weekly")}
+                >
+                    Weekly
+                </Button>
+                <Button 
+                    className="rounded-full bg-muted-foreground" 
+                    onClick={() => unfinishedFeatureToast("Monthly")}
+                >
+                    Monthly
+                </Button>
+                <Button 
+                    className="rounded-full bg-muted-foreground" 
+                    onClick={() => unfinishedFeatureToast("All Time")}
+                >
+                    All Time
+                </Button>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {statItems.map((item) => (
                     <Card key={item.label} className="bg-card">
-                        <CardContent className="p-6">
+                        <CardContent className="p-4 sm:p-6">
                             <div className="flex flex-col items-center justify-center space-y-2">
-                                <p className="text-sm text-muted-foreground">{item.label}</p>
-                                <p className="text-2xl font-bold">{item.value}</p>
+                                <p className="text-sm text-muted-foreground text-center">{item.label}</p>
+                                <p className="text-xl sm:text-2xl font-bold">{item.value}</p>
                             </div>
                         </CardContent>
                     </Card>
