@@ -64,11 +64,14 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
         )}
       </div>
       <Input
-          placeholder={"Filter"}
-          value={(table.getColumn("xHandle")?.getFilterValue() as string) ?? ""}
-          onChange={(event) => table.getColumn("xHandle")?.setFilterValue(event.target.value)}
-          className="h-8 w-[150px] lg:w-[250px] m-2"
-        />
+        placeholder={"Search by wallet or handle"}
+        value={(table.getColumn("globalSearch")?.getFilterValue() as string) ?? ""}
+        onChange={(event) => {
+          const value = event.target.value;
+          table.getColumn("globalSearch")?.setFilterValue(value);
+        }}
+        className="h-8 w-[150px] lg:w-[250px] m-2"
+      />
       <DataTableViewOptions table={table} />
       
     </div>

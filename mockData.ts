@@ -1,8 +1,7 @@
 export const mockData = {
-   TokenCount: 100,
-   WinRate: 50,
-   Buys: 100,
-   Sells: 100,
-   AvgBuy: 100,
-   AvgHold: 100,
+   tokenCount: 100,
+   winRate: 50,
+   trades: {buys: 200, sells: 100},
+   avgBuy: 100, // avg market cap of entry
+   avgHold: 100, // in minutes
 }

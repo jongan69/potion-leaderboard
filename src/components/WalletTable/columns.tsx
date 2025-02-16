@@ -34,24 +34,68 @@ export const columns: ColumnDef<Wallet>[] = [
     accessorKey: "profilePic",
     header: () => <h1>Trader</h1>,
     cell: ({ row }) => {
-      return <Image src={`https://avatar.iran.liara.run/username?username=${row.getValue("xHandle")}`} alt="Profile Pic" width={32} height={32} />;
+      const userName = row.original.userName;
+      const wallet = row.original.wallet;
+      return (
+        <div className="flex items-center gap-2">
+          <Image src={`https://avatar.iran.liara.run/username?username=${userName}`} alt="Profile Pic" width={32} height={32} />
+          <div className="flex flex-col items-start truncate">
+            <h1 className="font-medium">{userName}</h1>
+            <h1 className="text-sm text-gray-500 truncate">{wallet.slice(0, 6)}...{wallet.slice(-6)}</h1>
+          </div>
+        </div>
+      );
     },
-  },
-  {
-    accessorKey: "wallet",
-    header: ({ column }) => <DataTableColumnHeader column={column} title={"Wallet"} />,
-  },
-  {
-    accessorKey: "xHandle",
-    header: ({ column }) => <DataTableColumnHeader column={column} title={"X Handle"} />,
   },
   {
     accessorKey: "followers",
     header: ({ column }) => <DataTableColumnHeader column={column} title={"Followers"} />,
+    cell: ({ row }) => {
+      const followers = row.original.followers;
+      const xHandle = row.original.xHandle;
+      return (
+        <div className="flex flex-col items-center gap-2">
+          <div className="text-center">{followers}</div>
+          <div className="text-center">{xHandle}</div>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "tokenCount",
+    header: ({ column }) => <DataTableColumnHeader column={column} title={"Tokens"} />,
+  },
+  {
+    accessorKey: "winRate",
+    header: ({ column }) => <DataTableColumnHeader column={column} title={"Win Rate"} />,
+  },
+  {
+    accessorKey: "trades",
+    header: ({ column }) => <DataTableColumnHeader column={column} title={"Trades"} />,
+    cell: ({ row }) => {
+      const trades = row.getValue("trades") as { buys: number; sells: number };
+      return (
+        <div className="flex flex-col items-center gap-1">
+          <div className="flex items-center gap-2">
+            <span className="text-green-500">{trades.buys} Buys</span>
+            <span> / </span>
+            <span className="text-red-500">{trades.sells} Sells</span>
+          </div>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "avgBuy",
+    header: ({ column }) => <DataTableColumnHeader column={column} title={"Avg Buy"} />,
+  },
+  {
+    accessorKey: "avgHold",
+    header: ({ column }) => <DataTableColumnHeader column={column} title={"Avg Hold"} />,
   },
   {
     accessorKey: "pnl",
-    header: ({ column }) => <DataTableColumnHeader column={column} title={"PnL"} />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={"Realized PnL"} />,
     filterFn: (row, id, value: string[]) => {
       if (!value.length) return true;
       const pnl = row.getValue(id) as number;
@@ -62,14 +106,32 @@ export const columns: ColumnDef<Wallet>[] = [
       });
     },
   },
-  // {
-  //   accessorKey: "rtn",
-  //   header: ({ column }) => <DataTableColumnHeader column={column} title={"RTN"} />,
-  // },
-  // {
-  //   accessorKey: "otherInformation",
-  //   header: ({ column }) => <DataTableColumnHeader column={column} title={"Other Info"} />,
-  // },
+  {
+    accessorKey: "wallet",
+    header: ({ column }) => <DataTableColumnHeader column={column} title={"Wallet"} />,
+    cell: ({ row }) => {
+      const wallet = row.original.wallet;
+      return (
+        <div className="text-center">{wallet.slice(0, 6)}...{wallet.slice(-6)}</div>
+      );
+    },
+  },
+  {
+    accessorKey: "xHandle",
+    header: ({ column }) => <DataTableColumnHeader column={column} title={"X Handle"} />,
+    cell: ({ row }) => {
+      const xHandle = row.original.xHandle;
+      return (
+        <div className="text-center">{xHandle}</div>
+      );
+    },
+    filterFn: (row, id, filterValue) => {
+      const searchValue = (filterValue as string).toLowerCase();
+      const xHandle = String(row.getValue("xHandle")).toLowerCase();
+      const wallet = String(row.getValue("wallet")).toLowerCase();
+      return xHandle.includes(searchValue) || wallet.includes(searchValue);
+    }
+  },
   {
     accessorKey: "status",
     header: ({ column }) => <DataTableColumnHeader column={column} title={"Status"} />,
@@ -94,6 +156,16 @@ export const columns: ColumnDef<Wallet>[] = [
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
+  },
+  {
+    id: "globalSearch",
+    enableHiding: false,
+    filterFn: (row, id, filterValue) => {
+      const searchValue = (filterValue as string).toLowerCase();
+      const xHandle = String(row.getValue("xHandle")).toLowerCase();
+      const wallet = String(row.getValue("wallet")).toLowerCase();
+      return xHandle.includes(searchValue) || wallet.includes(searchValue);
+    }
   },
   {
     id: "actions",

@@ -31,11 +31,21 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
+const globalFilterFn = (row: any, columnId: string, filterValue: string) => {
+  const searchValue = filterValue.toLowerCase();
+  const xHandle = String(row.getValue("xHandle")).toLowerCase();
+  const wallet = String(row.getValue("wallet")).toLowerCase();
+  
+  return xHandle.includes(searchValue) || wallet.includes(searchValue);
+};
+
 export default function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
     location: false,
     otherInformation: false,
+    wallet: false,
+    xHandle: false,
   });
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 
@@ -46,6 +56,9 @@ export default function DataTable<TData, TValue>({ columns, data }: DataTablePro
       sorting,
       columnVisibility,
       columnFilters,
+    },
+    filterFns: {
+      globalSearch: globalFilterFn,
     },
     enableRowSelection: true,
     getCoreRowModel: getCoreRowModel(),
