@@ -1,5 +1,13 @@
 # Potion Trader Leaderboard
 
+<p align="center">
+  <a href="https://potionleaderboard.xyz/">
+    <img src="./public/logo.webp" />
+  </a>
+</p>
+
+[Live Demo](https://potionleaderboard.xyz/)
+
 A Next.js application that displays the leaderboard for Potion Traders on Solana, built for the Potion Competition.
 
 ## Tech Stack
