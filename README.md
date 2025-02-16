@@ -29,7 +29,7 @@ The Profile page will display a message to the user to connect their wallet, if 
 The profile page will display the trader's stats data and a table of the `mockData.ts` for trade data with associated share button for creating a PnL Image of the trade.
 
 - API/WEBHOOK
-The webhook is for the Live TradinG Feed that is displayed on the `app/` page, this feature was added before knowledge of the Figma designs.
+The webhook is for the Live TradinG Feed that is displayed on the `app/` page, this feature was added before knowledge of the Figma designs, the webhook data gets sent from Helius to Pusher, which then sends it to the frontend via the `LiveTrader.tsx` Component.
 
 - API/TWITTERAUTH/*
 The twitter auth process is handled by the `API/TWITTERAUTH/*` routes, the users profile gets saved to the mongodb database via the `API/TWITTERAUTH/CALLBACK` route.
