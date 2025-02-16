@@ -73,13 +73,13 @@ export const columns: ColumnDef<Wallet>[] = [
     accessorKey: "trades",
     header: ({ column }) => <DataTableColumnHeader column={column} title={"Trades"} />,
     cell: ({ row }) => {
-      const trades = row.getValue("trades") as { buys: number; sells: number };
+      const trades = row.original.trades;
       return (
         <div className="flex flex-col items-center gap-1">
           <div className="flex items-center gap-2">
-            <span className="text-green-500">{trades.buys} Buys</span>
+            <span className="text-green-500">{trades?.buys} Buys</span>
             <span> / </span>
-            <span className="text-red-500">{trades.sells} Sells</span>
+            <span className="text-red-500">{trades?.sells} Sells</span>
           </div>
         </div>
       );
