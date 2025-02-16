@@ -1,4 +1,5 @@
 export interface Trade {
+  id: number
   wallet: string
   label: string
   description: string
@@ -33,4 +34,20 @@ export interface Trade {
     holderCount?: number
     totalSupply?: string
   } | null
+  tokenInPic: string
+  tokenInSymbol: string
+  amountIn: number
+  tokenOutPic: string
+  tokenOutSymbol: string
+  tokenOutAddress: string
+  amountOut: number
+  entryPrice: number
+  exitPrice: number
+  pnl: number
+  roi: number
+  lastTrade: string
+  amountInvested: number
+  holding: number
+  avgSell: number
+  holdingTime: number
 } 

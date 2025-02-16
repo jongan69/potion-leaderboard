@@ -6,8 +6,9 @@ import { DataTableColumnHeader } from "@/components/WalletTable/data-table-colum
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
 import { Trade } from "@/types/trade";
+import { PnlDialog } from "@/components/PnlDialog.tsx/PnlDialog";
 
-export const columns: ColumnDef<Trade>[] = [
+export const createColumns = (userName: string): ColumnDef<Trade>[] => [
   {
     accessorKey: "token",
     header: () => <h1>Token</h1>,
@@ -38,6 +39,10 @@ export const columns: ColumnDef<Trade>[] = [
   {
     accessorKey: "marketCap",
     header: ({ column }) => <DataTableColumnHeader column={column} title={"Marketcap"} />,
+    cell: ({ row }) => {
+      const marketCap = row.original.toTokenData?.marketCap;
+      return <div>{marketCap}</div>;
+    },
   },
   {
     accessorKey: "amountInvested",
@@ -58,5 +63,33 @@ export const columns: ColumnDef<Trade>[] = [
   {
     accessorKey: "holdingTime",
     header: ({ column }) => <DataTableColumnHeader column={column} title={"Holding Time"} />,
+  },
+  {
+    id: "globalSearch",
+    enableHiding: false,
+    filterFn: (row, id, filterValue) => {
+      const searchValue = (filterValue as string).toLowerCase();
+      const tokenOutSymbol = String(row.original.toTokenData?.symbol).toLowerCase();
+      const tokenOutAddress = String(row.original.toTokenData?.address).toLowerCase();
+      return tokenOutSymbol.includes(searchValue) || tokenOutAddress.includes(searchValue);
+    }
+  },
+  {
+    accessorKey: "share",
+    header: () => <h1>Share</h1>,
+    cell: ({ row }) => {
+      return (
+        <PnlDialog 
+          {...{
+            totalInvested: row.original.fromAmount,
+            totalSold: row.original.toAmount,
+            roi: row.original.roi,
+            tokenSymbol: row.original.toTokenData?.symbol ?? "Unknown",
+            tokenImage: row.original.toTokenData?.image ?? "",
+            userName: userName
+          }}
+        />
+      );
+    },
   },
 ];

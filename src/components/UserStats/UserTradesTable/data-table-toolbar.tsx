@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 
 // import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 import { DataTableViewOptions } from "./data-table-view-options";
+import { unfinishedFeatureToast } from "@/lib/unfinishedFeatureToast";
 // import { usersStatus, pnlStatus } from "./definitions";
 // import { toast } from "react-hot-toast";
 
@@ -29,21 +30,30 @@ interface DataTableToolbarProps<TData> {
 
 export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
-
+  console.log(table);
   return (
     <div className="flex w-full items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
-      <div className="flex items-center space-x-4">
-        <Button variant="outline" className="rounded-full" onClick={() => {/* Handle Trades display */}}>
-          Trades
-        </Button>
-        <Button variant="outline" className="rounded-full" onClick={() => {/* Handle Tokens display */}}>
-          Tokens
-        </Button>
-        <Button variant="outline" className="rounded-full" onClick={() => {/* Handle Groups display */}}>
-          Groups
-        </Button>
-      </div>
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="outline"
+            className="rounded-full"
+            onClick={() => unfinishedFeatureToast("Trades")}>
+            Trades
+          </Button>
+          <Button
+            variant="outline"
+            className="rounded-full"
+            onClick={() => unfinishedFeatureToast("Tokens")}>
+            Tokens
+          </Button>
+          <Button
+            variant="outline"
+            className="rounded-full"
+            onClick={() => unfinishedFeatureToast("Groups")}>
+            Groups
+          </Button>
+        </div>
 
         {isFiltered && (
           <Button

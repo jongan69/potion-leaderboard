@@ -1,8 +1,10 @@
+"use client"
 import {
     Card,
     CardContent,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
+import { unfinishedFeatureToast } from "@/lib/unfinishedFeatureToast";
 
 
 type UserStatsProps = {
@@ -38,10 +40,10 @@ export function UserStatsTable({ stats }: UserStatsProps) {
     return (
         <div>
             <div className="flex space-x-4 mb-4">
-                <Button className="rounded-full bg-muted-foreground">Daily</Button>
-                <Button className="rounded-full bg-muted-foreground">Weekly</Button>
-                <Button className="rounded-full bg-muted-foreground">Monthly</Button>
-                <Button className="rounded-full bg-muted-foreground">All Time</Button>
+                <Button className="rounded-full bg-muted-foreground" onClick={() => unfinishedFeatureToast("Daily")}>Daily</Button>
+                <Button className="rounded-full bg-muted-foreground" onClick={() => unfinishedFeatureToast("Weekly")}>Weekly</Button>
+                <Button className="rounded-full bg-muted-foreground" onClick={() => unfinishedFeatureToast("Monthly")}>Monthly</Button>
+                <Button className="rounded-full bg-muted-foreground" onClick={() => unfinishedFeatureToast("All Time")}>All Time</Button>
             </div>
             <div className="grid grid-cols-3 gap-4">
                 {statItems.map((item) => (

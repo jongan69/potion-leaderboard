@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 // replace with mongodb call
 import { tradersData } from "../../../../../traders";
-import { mockStatsData } from "../../../../../mockData";
+import { mockStatsData, mockTradesData, mockTokenHoldingsData } from "../../../../../mockData";
 
 // Add cache configuration
 export const revalidate = 300; // Cache for 5 minutes
@@ -70,7 +70,9 @@ export async function GET(request: Request) {
                     ...trader,
                     followers,
                     pnl,
-                    ...mockStatsData
+                    ...mockStatsData,
+                    trades: mockTradesData,
+                    tokenHoldings: mockTokenHoldingsData
                 }
             })
         )

@@ -25,20 +25,21 @@ import {
 
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
+import { createColumns } from "./columns";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface DataTableProps<TData> {
   data: TData[];
+  userName: string;
 }
 
-export default function UserTradesDataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export default function UserTradesDataTable<TData>({ data, userName }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
     wallet: false,
     xHandle: false,
   });
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-
+  const columns = createColumns(userName) as ColumnDef<TData>[];
   const table = useReactTable({
     data,
     columns,

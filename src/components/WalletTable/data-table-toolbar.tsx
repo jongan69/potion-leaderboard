@@ -13,6 +13,7 @@ import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 import { DataTableViewOptions } from "./data-table-view-options";
 import { usersStatus, pnlStatus } from "./definitions";
 import { toast } from "react-hot-toast";
+import { unfinishedFeatureToast } from "@/lib/unfinishedFeatureToast";
 
 
 const handleSwitchChange = (checked: boolean) => {
@@ -65,9 +66,15 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
       </div>
 
       <div className="flex items-center space-x-4 mb-4 justify-center flex-1">
-        <Button className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">Daily</Button>
-        <Button className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">Weekly</Button>
-        <Button className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">Monthly</Button>
+        <Button 
+        onClick={() => unfinishedFeatureToast("Daily")}
+        className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">Daily</Button>
+        <Button 
+        onClick={() => unfinishedFeatureToast("Weekly")}
+        className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">Weekly</Button>
+        <Button 
+        onClick={() => unfinishedFeatureToast("Monthly")}
+        className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">Monthly</Button>
         <Button className="rounded-full bg-muted-foreground dark:bg-[#25223D] dark:text-white">All Time</Button>
       </div>
       

@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { formatDistanceToNow } from "date-fns"
 import { Twitter } from "lucide-react"
 import UserTradesDataTable from "@/components/UserStats/UserTradesTable/data-table"
-import { columns } from "@/components/UserStats/UserTradesTable/columns"
 
 type Props = {
     params: Promise<{ walletAddress: string }>
@@ -22,7 +21,7 @@ export default async function UserPage(props: Props) {
 
     return (
         <div className="container mx-auto py-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {/* Profile Section */}
                 <div className="bg-card rounded-lg p-6 shadow-md">
                     <div className="flex flex-col items-center space-y-4">
@@ -32,7 +31,7 @@ export default async function UserPage(props: Props) {
                         </Avatar>
                         
                         <div className="text-center">
-                            <h2 className="text-2xl font-bold">{user?.userName || `${walletAddress.slice(0, 6)}...${walletAddress.slice(-6)}`}</h2>
+                            <h2 className="text-xl md:text-2xl font-bold">{user?.userName || `${walletAddress.slice(0, 6)}...${walletAddress.slice(-6)}`}</h2>
                             
                             {user?.xHandle && (
                                 <a 
@@ -70,7 +69,7 @@ export default async function UserPage(props: Props) {
             </div>
             <div >
                 <div className="bg-card rounded-lg p-6 shadow-md">
-                    <UserTradesDataTable columns={columns} data={user} />
+                    <UserTradesDataTable data={user?.trades} userName={user?.userName} />
                 </div>
             </div>
         </div>
