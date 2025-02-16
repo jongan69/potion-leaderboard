@@ -6,7 +6,7 @@ import { DataTableColumnHeader } from "@/components/WalletTable/data-table-colum
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
 import { Trade } from "@/types/trade";
-import { PnlDialog } from "@/components/PnlDialog.tsx/PnlDialog";
+import { PnlDialog } from "@/components/PnlDialog/PnlDialog";
 
 export const createColumns = (userName: string): ColumnDef<Trade>[] => [
   {

@@ -4,6 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { formatDistanceToNow } from "date-fns"
 import { Twitter } from "lucide-react"
 import UserTradesDataTable from "@/components/UserStats/UserTradesTable/data-table"
+import { Button } from "@/components/ui/button"
+import { handleTwitterAuth } from "@/lib/handleTwitterAuth"
+import { PublicKey } from "@solana/web3.js"
+import UserSignup from "@/components/UserSignup/UserSignup"
 
 type Props = {
     params: Promise<{ walletAddress: string }>
@@ -15,12 +19,12 @@ export default async function UserPage(props: Props) {
     const { walletAddress } = await params
     const user = await fetchUser(walletAddress)
     console.log(user)
-    const lastTradeTime = user?.lastTradeTime 
+    const lastTradeTime = user?.lastTradeTime
         ? formatDistanceToNow(new Date(user.lastTradeTime), { addSuffix: true })
         : 'Never'
 
     return (
-        <div className="container mx-auto py-8">
+        user !== null ? <div className="container mx-auto py-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {/* Profile Section */}
                 <div className="bg-card rounded-lg p-6 shadow-md">
@@ -29,12 +33,12 @@ export default async function UserPage(props: Props) {
                             <AvatarImage src={user?.profilePic} />
                             <AvatarFallback>{walletAddress.slice(0, 2)}</AvatarFallback>
                         </Avatar>
-                        
+
                         <div className="text-center">
                             <h2 className="text-xl md:text-2xl font-bold">{user?.userName || `${walletAddress.slice(0, 6)}...${walletAddress.slice(-6)}`}</h2>
-                            
+
                             {user?.xHandle && (
-                                <a 
+                                <a
                                     href={`https://twitter.com/${user.xHandle}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -44,7 +48,7 @@ export default async function UserPage(props: Props) {
                                     {user.xHandle}
                                 </a>
                             )}
-                            
+
                             <p className="text-sm text-muted-foreground mt-2">
                                 Last trade: {lastTradeTime}
                             </p>
@@ -73,5 +77,6 @@ export default async function UserPage(props: Props) {
                 </div>
             </div>
         </div>
+            : <UserSignup walletAddress={walletAddress} />
     )
 }
